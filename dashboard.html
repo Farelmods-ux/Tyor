@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyor V1 - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+    }
+
+    /* Header */
+    .header {
+      background: #1a1a1a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .menu-btn {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .profile-pic {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: -250px;
+      top: 0;
+      width: 250px;
+      height: 100%;
+      background: #111;
+      transition: 0.3s;
+      padding: 20px;
+      z-index: 200;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar .close-btn {
+      font-size: 20px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    /* Title Section */
+    .title-section {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .title-section h1 {
+      margin: 5px 0;
+      font-size: 24px;
+      color: #9d4dff;
+    }
+    .title-section h2 {
+      margin: 5px 0;
+      font-size: 18px;
+      color: #bbb;
+    }
+
+    /* Menu Grid */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 20px;
+    }
+    .menu-item {
+      background: #1c1c1c;
+      border-radius: 12px;
+      text-align: center;
+      padding: 20px 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .menu-item i {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #9d4dff;
+    }
+    .menu-item span {
+      font-size: 14px;
+      display: block;
+    }
+    .menu-item.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .menu-item:hover {
+      background: #292929;
+    }
+
+    /* Telegram Banner */
+    .telegram-banner {
+      margin: 20px;
+      background: linear-gradient(45deg, #9d4dff, #673ab7);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .telegram-banner:hover { opacity: 0.9; }
+
+    /* Server Stats */
+    .server-stats {
+      margin: 20px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 12px;
+    }
+    .server-stats h3 {
+      margin-bottom: 10px;
+      color: #9d4dff;
+    }
+    .server-stats p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: #111;
+      padding: 10px 0;
+    }
+    .bottom-nav .nav-item {
+      text-align: center;
+      color: #bbb;
+      flex: 1;
+      cursor: pointer;
+    }
+    .bottom-nav .nav-item.active { color: #9d4dff; }
+    .bottom-nav i { display: block; font-size: 18px; }
+
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="menu-btn"><i class="fas fa-bars"></i></div>
+    <div class="title">Tyor V1</div>
+    <img src="https://via.placeholder.com/35" alt="Profile" class="profile-pic">
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn"><i class="fas fa-times"></i></span>
+    <!-- isi sidebar kosong dulu -->
+  </div>
+
+  <!-- Title Section -->
+  <div class="title-section">
+    <h1>Tyor V0.1</h1>
+    <h2>Powered By @Farelmod</h2>
+    <h2>Developed By @FarellXyz.</h2>
+  </div>
+
+  <!-- Menu Grid -->
+  <div class="menu-grid">
+    <div class="menu-item"><i class="fas fa-bolt"></i><span>DDoS Panel</span></div>
+    <div class="menu-item"><i class="fas fa-paper-plane"></i><span>Spam NGL</span></div>
+    <div class="menu-item"><i class="fas fa-id-card"></i><span>NIK Parse</span></div>
+    <div class="menu-item"><i class="fas fa-network-wired"></i><span>Subdomain Finder</span></div>
+    <div class="menu-item disabled"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
+    <div class="menu-item disabled"><i class="fas fa-comments"></i><span>Chat</span></div>
+    <div class="menu-item"><i class="fas fa-user-cog"></i><span>Account</span></div>
+  </div>
+
+  <!-- Telegram Banner -->
+  <div class="telegram-banner" onclick="window.open('https://t.me/Farelmod', '_blank')">
+    🔥 Telegram Channel: Join To Get More Info!
+  </div>
+
+  <!-- Server Stats -->
+  <div class="server-stats">
+    <h3>Server Stats</h3>
+    <p>👥 Online Users: <span id="onlineUsers">0</span></p>
+    <p>🚀 Active Sender: <span id="activeSender">0</span></p>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item"><i class="fas fa-phone"></i><span>Bug</span></div>
+    <div class="nav-item"><i class="fas fa-play"></i><span>Spam</span></div>
+    <div class="nav-item"><i class="fas fa-comment"></i><span>Chat</span></div>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    const sidebar = document.getElementById("sidebar");
+    document.querySelector(".menu-btn").onclick = () => sidebar.classList.add("active");
+    document.querySelector(".close-btn").onclick = () => sidebar.classList.remove("active");
+
+    // Online Users detector (sederhana, hanya simulasi)
+    function updateOnlineUsers() {
+      // Bisa dihubungkan ke server, untuk sekarang random 1-10
+      document.getElementById("onlineUsers").textContent = Math.floor(Math.random() * 10) + 1;
+    }
+    updateOnlineUsers();
+    setInterval(updateOnlineUsers, 5000);
+
+    // Active Sender default = 0
+    document.getElementById("activeSender").textContent = 0;
+
+    // Cek session: kalau tidak ada session → kembali ke login
+    const session = localStorage.getItem("app_session");
+    if (!session) {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
