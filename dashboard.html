@@ -38,40 +38,23 @@
       cursor: pointer;
     }
 
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      left: -250px;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: #111;
-      transition: 0.3s;
-      padding: 20px;
-      z-index: 200;
+  .sidebar h4 {
+    font-size: 14px;
+    margin-top: 15px;
     }
-    .sidebar.active { left: 0; }
-    .sidebar .close-btn {
-      font-size: 20px;
-      cursor: pointer;
-      margin-bottom: 20px;
-      display: block;
+  .sidebar-item {
+    padding: 10px;
+    border-radius: 6px;
+    margin: 5px 0;
+    cursor: pointer;
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     }
-
-    /* Title Section */
-    .title-section {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .title-section h1 {
-      margin: 5px 0;
-      font-size: 24px;
-      color: #9d4dff;
-    }
-    .title-section h2 {
-      margin: 5px 0;
-      font-size: 18px;
-      color: #bbb;
+  .sidebar-item:hover {
+    background: #222;
+    color: #9d4dff;
     }
 
     /* Menu Grid */
@@ -160,14 +143,39 @@
   <div class="header">
     <div class="menu-btn"><i class="fas fa-bars"></i></div>
     <div class="title">Tyor V1</div>
-    <img src="https://via.placeholder.com/35" alt="Profile" class="profile-pic">
+    <img id="profilePic" src="https://via.placeholder.com/35" class="profile-pic" alt="Profile">
+    <input type="file" id="uploadProfile" accept="image/*" style="display:none">
+//    <img src="https://via.placeholder.com/35" alt="Profile" class="profile-pic">
   </div>
 
   <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <span class="close-btn"><i class="fas fa-times"></i></span>
-    <!-- isi sidebar kosong dulu -->
+<div class="sidebar" id="sidebar">
+  <span class="close-btn"><i class="fas fa-times"></i></span>
+
+  <div style="text-align:center; font-size:18px; font-weight:bold; margin:20px 0; color:#9d4dff;">
+    TYOR DESTROYER
   </div>
+
+  <div style="margin:20px 0;">
+    <h4 style="color:#aaa; margin-bottom:10px;"># Settings</h4>
+    <div class="sidebar-item" onclick="window.location.href='account.html'">
+      <i class="fas fa-user-cog"></i> Account
+    </div>
+  </div>
+
+  <div style="margin:20px 0;">
+    <h4 style="color:#aaa; margin-bottom:10px;"># Media</h4>
+    <div class="sidebar-item" onclick="window.open('https://t.me/Farelmod','_blank')">
+      <i class="fas fa-code"></i> Developer
+    </div>
+  </div>
+
+  <div style="margin:20px 0;">
+    <div class="sidebar-item" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </div>
+  </div>
+</div>
 
   <!-- Title Section -->
   <div class="title-section">
@@ -178,10 +186,6 @@
 
   <!-- Menu Grid -->
   <div class="menu-grid">
-    <div class="menu-item"><i class="fas fa-bolt"></i><span>DDoS Panel</span></div>
-    <div class="menu-item"><i class="fas fa-paper-plane"></i><span>Spam NGL</span></div>
-    <div class="menu-item"><i class="fas fa-id-card"></i><span>NIK Parse</span></div>
-    <div class="menu-item"><i class="fas fa-network-wired"></i><span>Subdomain Finder</span></div>
     <div class="menu-item disabled"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
     <div class="menu-item disabled"><i class="fas fa-comments"></i><span>Chat</span></div>
     <div class="menu-item"><i class="fas fa-user-cog"></i><span>Account</span></div>
@@ -212,6 +216,33 @@
     const sidebar = document.getElementById("sidebar");
     document.querySelector(".menu-btn").onclick = () => sidebar.classList.add("active");
     document.querySelector(".close-btn").onclick = () => sidebar.classList.remove("active");
+
+  const profilePic = document.getElementById("profilePic");
+   const uploadProfile = document.getElementById("uploadProfile");
+
+   // load dari localStorage
+    const savedPic = localStorage.getItem("profile_pic");
+     if (savedPic) profilePic.src = savedPic;
+
+   // klik foto → trigger input file
+     profilePic.onclick = () => uploadProfile.click();
+
+   // saat pilih gambar
+   uploadProfile.onchange = (e) => {
+     const file = e.target.files[0];
+     if (!file) return;
+     const reader = new FileReader();
+     reader.onload = () => {
+    profilePic.src = reader.result;
+    localStorage.setItem("profile_pic", reader.result);
+      };
+    reader.readAsDataURL(file);
+  };
+
+   function logout() {
+      localStorage.removeItem("app_session");
+      window.location.href = "index.html";
+    }
 
     // Online Users detector (sederhana, hanya simulasi)
     function updateOnlineUsers() {
