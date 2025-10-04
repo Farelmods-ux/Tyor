@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tyor Destroyer - Login</title>
+  <title>Sparta Protocol - Login</title>
 
-  <!-- Google Font & Icon -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link rel="icon" href="https://autoresbot.com/tmp_files/0de45e06-af8c-464b-8af3-84fa6ae13b38.jpg" type="image/png">
 
   <style>
+    /* CSS Sama Seperti Sebelumnya */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -49,7 +49,7 @@
       border-radius: 20px;
       max-width: 450px;
       width: 90%;
-      box-brakes: 0 0 25px rgba(60, 43, 230, 0.3);
+      box-shadow: 0 0 25px rgba(60, 43, 230, 0.3);
       animation: fadeIn 0.8s ease;
     }
 
@@ -70,15 +70,15 @@
     }
 
     .logo {
-      width: 100px;
-      filter: drop-brakes(0 0 30px #2B30E2);
+      width: 150px;
+      filter: drop-shadow(0 0 30px #2B30E2);
       margin-bottom: 20px;
     }
 
     .title {
       font-size: 32px;
       color: #1B47F1;
-      text-brakes: 0 0 10px #0917D7;
+      text-shadow: 0 0 10px #0917D7;
       font-weight: 800;
       letter-spacing: 1px;
     }
@@ -118,7 +118,7 @@
     .form-control:focus {
       outline: none;
       border-color: #1C2DE8;
-      box-brakes: 0 0 10px rgba(46, 43, 226, 0.3);
+      box-shadow: 0 0 10px rgba(46, 43, 226, 0.3);
     }
 
     .form-control::placeholder {
@@ -143,67 +143,110 @@
     .btn-login:hover {
       background: #2118D7;
       transform: translateY(-2px);
-      box-brakes: 0 8px 16px rgba(43, 59, 226, 0.4);
+      box-shadow: 0 8px 16px rgba(43, 59, 226, 0.4);
     }
 
-    .btn-access {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      background: rgba(43, 73, 226, 0.2);
-      color: #2B3ADF;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 500;
-      text-decoration: none;
-      margin-top: 15px;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(43, 51, 226, 0.3);
+    .link-info {
+        margin-top:12px;
+        font-size:12px;
+        color:#9fb0ff;
+        text-align: center;
+    }
+    
+    .link-info a {
+        color: #B3C0FF;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .link-info a:hover {
+        color: #ffffff;
+        text-decoration: underline;
     }
 
-    .btn-access:hover {
-      background: rgba(43, 55, 226, 0.3);
-      transform: translateY(-2px);
+    /* --- Custom Modal Pop-up Styles --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: none; /* Default hidden */
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
     }
 
-    .footer {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 12px;
-      color: #402BE2;
+    .modal-content {
+        background: #101533;
+        border: 1px solid #2B51E2;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 350px;
+        width: 90%;
+        text-align: center;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transform: scale(0.8);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* Toast Notification Styles - Sama seperti di dashboard */
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 20px;
-      border-radius: 8px;
-      background: rgba(0, 21, 120, 0.9);
-      border: 1px solid #402BE2;
-      color: white;
-      z-index: 1000;
-      box-brakes: 0 5px 15px rgba(0, 0, 0, 0.2);
-      transform: translateX(100vw);
-      transition: transform 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .modal-overlay.show .modal-content {
+        transform: scale(1);
+        opacity: 1;
+    }
+    
+    .modal-icon {
+        color: #ff4444;
+        font-size: 40px;
+        margin-bottom: 15px;
     }
 
-    .notification.show {
-      transform: translateX(0);
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
     }
 
-    .notification.error {
-      background: rgba(120, 0, 0, 0.9);
-      border-color: #ff4444;
+    .modal-text {
+        font-size: 14px;
+        color: #B3C0FF;
+        margin-bottom: 25px;
+        line-height: 1.5;
     }
 
-    .notification.success {
-      background: rgba(0, 100, 0, 0.9);
-      border-color: #44ff44;
+    .modal-buttons button {
+        padding: 10px 20px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    #btn-buy {
+        background-color: #352BE2;
+        color: white;
+    }
+
+    #btn-buy:hover {
+        background-color: #2118D7;
+        transform: translateY(-1px);
+    }
+
+    #btn-close {
+        background-color: #2a3a4c;
+        color: #ffffff;
+    }
+
+    #btn-close:hover {
+        background-color: #3e5066;
+        transform: translateY(-1px);
     }
 
     /* Responsive styles */
@@ -211,6 +254,10 @@
       .login-container {
         padding: 30px 20px;
         width: 95%;
+      }
+
+      .logo {
+        width: 120px;
       }
 
       .title {
@@ -225,15 +272,18 @@
         padding: 12px 12px 12px 40px;
       }
 
-      .btn-login, .btn-access {
+      .btn-login {
         padding: 12px;
       }
+      
+      .modal-content {
+        padding: 20px;
+      }
 
-      .notification {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        padding: 12px 15px;
+      .modal-buttons button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
       }
     }
 
@@ -259,7 +309,7 @@
   <div class="login-container">
     <div class="logo-container">
       <img src="https://autoresbot.com/tmp_files/0de45e06-af8c-464b-8af3-84fa6ae13b38.jpg" alt="Logo" class="logo">
-      <div class="title">Tyor Destroyer</div>
+      <div class="title">Sparta Protocol</div>
       <div class="subtitle">Beta Version [0.1]</div>
     </div>
 
@@ -277,77 +327,64 @@
       </button>
     </form>
 
-    <!-- Optional: place to set the raw github URL quickly for testing -->
-   <div style="margin-top:12px;font-size:12px;color:#9fb0ff">Jika belum mempunyai akun beli di <a target="_blank" href="https://t.me/Farelmod">@Farelmod</a></div>
+    <div class="link-info">Jika belum mempunyai akun beli di <a target="_blank" href="https://t.me/Farelmod">@Farelmod</a></div>
+  </div>
 
-  <!-- Toast notification seperti di dashboard -->
-  <div id="notification" class="notification">
-    <i class="fas fa-check-circle"></i> 
-    <span id="notification-text"></span>
+  <div id="custom-modal" class="modal-overlay">
+    <div class="modal-content">
+        <i class="fas fa-exclamation-triangle modal-icon"></i>
+        <div id="modal-title" class="modal-title">Terjadi Kesalahan Login!</div>
+        <p id="modal-text" class="modal-text">Pesan kesalahan akan muncul di sini.</p>
+        <div class="modal-buttons">
+            <button id="btn-buy" onclick="window.open('https://t.me/Farelmod', '_blank')">Beli akun</button>
+            <button id="btn-close">Keluar</button>
+        </div>
+    </div>
   </div>
   
   <script>
-    // ====== PENTING ======
-    // Ganti nilai raw_url ini menjadi link RAW GitHub file akses.json Anda
+    // ====== PENTING: URL RAW GitHub untuk akses.json ======
     const raw_url = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
-    // =====================
+    // =======================================================
+    
+    // Elemen Modal
+    const customModal = document.getElementById('custom-modal');
+    const modalText = document.getElementById('modal-text');
+    const modalTitle = document.getElementById('modal-title');
+    const btnClose = document.getElementById('btn-close');
 
-    // Toast notification untuk pesan (sudah ada sebelumnya)
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get("msg");
-    const type = params.get("type") || "info"; // info, error, success
-
-    if (msg) {
-      showNotification(decodeURIComponent(msg), type);
+    // Fungsi untuk menampilkan Pop-up Modal
+    function showCustomModal(message, title = "Terjadi Kesalahan Login!") {
+        modalTitle.textContent = title;
+        modalText.textContent = message;
+        customModal.style.display = 'flex';
+        setTimeout(() => customModal.classList.add('show'), 10);
     }
-
-    function showNotification(message, type = "info") {
-      const notification = document.getElementById("notification");
-      const notificationText = document.getElementById("notification-text");
-      notificationText.textContent = message;
-      notification.className = "notification"; // reset
-      notification.classList.add("show");
-
-      let icon = "fas fa-info-circle";
-      if (type === "error") {
-        icon = "fas fa-exclamation-circle";
-        notification.classList.add("error");
-      } else if (type === "success") {
-        icon = "fas fa-check-circle";
-        notification.classList.add("success");
-      }
-
-      notification.innerHTML = `<i class="${icon}"></i> <span id="notification-text">${message}</span>`;
-
-      setTimeout(() => {
-        notification.classList.remove("show");
-      }, 5000);
+    
+    // Fungsi untuk menyembunyikan Pop-up Modal
+    function hideCustomModal() {
+        customModal.classList.remove('show');
+        setTimeout(() => customModal.style.display = 'none', 300);
     }
+    
+    // Aksi Tombol Keluar: Tutup modal dan refresh halaman
+    // Ini juga digunakan untuk tombol "Logout" di kasus Real-Time Deletion (di dashboard)
+    btnClose.addEventListener('click', function() {
+        hideCustomModal();
+        window.location.reload(); 
+    });
 
-    // ------------------------------------
-    // Helper untuk browser notification
-    function tryShowBrowserNotification(title, body) {
-      if (!('Notification' in window)) return;
-      if (Notification.permission === 'granted') {
-        new Notification(title, { body });
-      } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') new Notification(title, { body });
-        });
-      }
-    }
-
-    // Utility parse durasi seperti "25d" atau "permanent"
+    // Helper functions (dipertahankan)
     function parseDurationToDays(dur) {
       if (!dur) return null;
       dur = dur.toString().trim().toLowerCase();
       if (dur === 'permanent' || dur === 'perm' || dur === 'permanen') return Infinity;
       const m = dur.match(/^(\d+)\s*d$/);
       if (m) return parseInt(m[1], 10);
-      return null; // unknown
+      return null;
     }
 
-    // Simpan session user di localStorage dengan struktur { username, role, durasi, loginAt, expiresAt }
+    // Session Management (dipertahankan dan KRITIS)
     function saveSession(userObj) {
       localStorage.setItem('app_session', JSON.stringify(userObj));
     }
@@ -362,111 +399,81 @@
       } catch (e) { return null; }
     }
 
-    // Maintain list of expired usernames (so when they try login again, we show chrome notification)
-    function addExpiredUser(username, durasi) {
-      const key = 'expired_users';
-      const cur = JSON.parse(localStorage.getItem(key) || '[]');
-      // store with durasi for better message
-      cur.push({ username, durasi, expiredAt: Date.now() });
-      localStorage.setItem(key, JSON.stringify(cur));
-    }
-
     function isUserMarkedExpired(username) {
       const key = 'expired_users';
       const cur = JSON.parse(localStorage.getItem(key) || '[]');
       return cur.find(u => u.username === username);
     }
 
-    // Check session expiry on page load
-    (function checkSessionOnLoad() {
-      const session = getSession();
-      if (!session) return;
-      if (session.expiresAt && session.expiresAt !== Infinity) {
-        const now = Date.now();
-        if (now >= session.expiresAt) {
-          // expired -> clear session and inform user
-          clearSession();
-          addExpiredUser(session.username, session.durasi);
-          const notifMsg = `Akun Anda Terhapus, Karena Masa Aktif Sudah Melewati ${session.durasi} Silahkan Beli Masa Aktif Anda Lagi`;
-          showNotification(notifMsg, 'error');
-          tryShowBrowserNotification('Akun Terhapus', notifMsg);
-        }
-      }
-    })();
 
-    // Fetch akses.json from RAW JSON URL
+    // Fetch akses.json from RAW JSON URL (dipertahankan dan KRITIS)
     async function fetchAccessList() {
       try {
         const resp = await fetch(raw_url, { cache: 'no-store' });
         if (!resp.ok) throw new Error('Gagal mengambil akses.json: ' + resp.status);
         const txt = await resp.text();
-        // Toleransi: coba parse langsung. Jika file memiliki trailing commas or wrapper, try to extract array
         let data;
         try { data = JSON.parse(txt); }
         catch (e) {
-          // attempt to find first JSON array/object
           const arrMatch = txt.match(/\[([\s\S]*)\]/);
           if (arrMatch) {
             try { data = JSON.parse('[' + arrMatch[1] + ']'); } catch (e2) { data = null; }
           }
         }
-        // If data is object with unnamed array inside, attempt to find first array value
         if (!data) return null;
         if (Array.isArray(data)) return data;
-        // if object with keys and values being objects, convert to array
         if (typeof data === 'object') {
           const vals = Object.values(data).filter(v => typeof v === 'object');
           if (vals.length) return vals;
         }
         return null;
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching access list:", err);
         return null;
       }
     }
 
-    // Handle form submit -> prevent default and validate against akses.json
+    // Handle form submit (Logika Login Awal)
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const username = this.username.value.trim();
       const password = this.password.value.trim();
 
-      // quick demo rule from original (keep existing demo behavior)
+      // Quick demo check and fetch logic...
+      // ... (Same logic as before) ...
+      
       if (username === "demo" && password === "error") {
-        showNotification("Username atau password salah", "error");
+        showCustomModal("Password & Username Salah, Harap Coba Dengan Password & Username Yang Benar");
         return;
       }
 
-      // Fetch access list
       const list = await fetchAccessList();
       if (!list) {
-        showNotification('Gagal mengambil data akses. Periksa raw_url di skrip.', 'error');
+        showCustomModal('Gagal mengambil data akses. Periksa raw_url di skrip.', 'Gagal Koneksi');
         return;
       }
 
-      // find user
       const found = list.find(u => (u.username == username));
+
       if (!found) {
-        showNotification('Username tidak ditemukan', 'error');
+        showCustomModal('Username Salah, Harap Coba Lagi');
         return;
       }
 
-      // check password
       if ((found.password || '') !== password) {
-        showNotification('Password salah', 'error');
+        showCustomModal('Password Salah, Harap Masukan Password Yang Benar');
         return;
       }
 
-      // check if this user was previously marked expired
+      // Check expired status (dihapus oleh sistem)
       const expiredMark = isUserMarkedExpired(username);
       if (expiredMark) {
         const notifMsg = `Akun Anda Terhapus, Karena Masa Aktif Sudah Melewati ${expiredMark.durasi} Silahkan Beli Masa Aktif Anda Lagi`;
-        showNotification(notifMsg, 'error');
-        tryShowBrowserNotification('Akun Terhapus', notifMsg);
+        showCustomModal(notifMsg);
         return;
       }
 
-      // determine duration
+      // Login BERHASIL
       const durasiRaw = (found.durasi || '').toString();
       const days = parseDurationToDays(durasiRaw);
       const now = Date.now();
@@ -475,7 +482,6 @@
         expiresAt = now + days * 24 * 60 * 60 * 1000;
       }
 
-      // Save session locally
       const sessionObj = {
         username: found.username,
         role: found.role || null,
@@ -484,31 +490,31 @@
         expiresAt: expiresAt
       };
       saveSession(sessionObj);
+      
+      // REDIRECT KE DASHBOARD
       window.location.href = "dashboard.html";
-//    showNotification('Login berhasil', 'success');
-
-      // redirect or further action: developer can change this. For now we'll stay and show message.
-      // If you want to redirect to dashboard, uncomment next line and set URL
-      // window.location.href = '/dashboard.html';
     });
 
   </script>
   
-  <!-- Particles.js -->
   <script src="https://cdn.jsdelivr.net/gh/jnicol/particleground/jquery.particleground.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    particleground(document.getElementById('particles'), {
-      dotColor: '#1E90FF',
-      lineColor: '#283EE7',
-      minSpeedX: 0.1,
-      maxSpeedX: 0.3,
-      minSpeedY: 0.1,
-      maxSpeedY: 0.3,
-      density: 10000,
-      particleRadius: 3,
-    });
+    if (typeof particleground === 'function') {
+        particleground(document.getElementById('particles'), {
+          dotColor: '#1E90FF',
+          lineColor: '#283EE7',
+          minSpeedX: 0.1,
+          maxSpeedX: 0.3,
+          minSpeedY: 0.1,
+          maxSpeedY: 0.3,
+          density: 10000,
+          particleRadius: 3,
+        });
+    } else {
+        console.warn("particleground function not found.");
+    }
   }, false);
 </script>
 </body>
