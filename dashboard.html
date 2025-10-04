@@ -1,265 +1,255 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tyor V1 - Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #0d0d0d;
-      color: #fff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparta Protocol - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* CSS umum (dari login.html) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: black; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; }
+        .content { padding: 50px; text-align: center; }
+        .welcome { color: #1B47F1; font-size: 36px; margin-bottom: 20px; text-shadow: 0 0 10px #0917D7; }
+        .user-info { font-size: 18px; color: #B3C0FF; }
+        .logout-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 30px; }
 
-    /* Header */
-    .header {
-      background: #1a1a1a;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .menu-btn {
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .profile-pic {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      object-fit: cover;
-      cursor: pointer;
-    }
 
-  .sidebar h4 {
-    font-size: 14px;
-    margin-top: 15px;
-    }
-  .sidebar-item {
-    padding: 10px;
-    border-radius: 6px;
-    margin: 5px 0;
-    cursor: pointer;
-    color: #ddd;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    }
-  .sidebar-item:hover {
-    background: #222;
-    color: #9d4dff;
-    }
+        /* --- Custom Modal Pop-up Styles (WAJIB ADA DI DASHBOARD) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
 
-    /* Menu Grid */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      padding: 20px;
-    }
-    .menu-item {
-      background: #1c1c1c;
-      border-radius: 12px;
-      text-align: center;
-      padding: 20px 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .menu-item i {
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #9d4dff;
-    }
-    .menu-item span {
-      font-size: 14px;
-      display: block;
-    }
-    .menu-item.disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .menu-item:hover {
-      background: #292929;
-    }
+        .modal-content {
+            background: #101533;
+            border: 1px solid #2B51E2;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-    /* Telegram Banner */
-    .telegram-banner {
-      margin: 20px;
-      background: linear-gradient(45deg, #9d4dff, #673ab7);
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-    }
-    .telegram-banner:hover { opacity: 0.9; }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-icon {
+            color: #ff4444;
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
 
-    /* Server Stats */
-    .server-stats {
-      margin: 20px;
-      background: #1a1a1a;
-      padding: 15px;
-      border-radius: 12px;
-    }
-    .server-stats h3 {
-      margin-bottom: 10px;
-      color: #9d4dff;
-    }
-    .server-stats p {
-      margin: 5px 0;
-      font-size: 14px;
-    }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
 
-    /* Bottom Nav */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: #111;
-      padding: 10px 0;
-    }
-    .bottom-nav .nav-item {
-      text-align: center;
-      color: #bbb;
-      flex: 1;
-      cursor: pointer;
-    }
-    .bottom-nav .nav-item.active { color: #9d4dff; }
-    .bottom-nav i { display: block; font-size: 18px; }
+        .modal-text {
+            font-size: 14px;
+            color: #B3C0FF;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
 
-  </style>
+        .modal-buttons button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        #btn-buy-modal {
+            background-color: #352BE2;
+            color: white;
+        }
+
+        #btn-buy-modal:hover {
+            background-color: #2118D7;
+            transform: translateY(-1px);
+        }
+
+        #btn-logout-modal {
+            background-color: #2a3a4c;
+            color: #ffffff;
+        }
+
+        #btn-logout-modal:hover {
+            background-color: #3e5066;
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
+
 <body>
-  <!-- Header -->
-  <div class="header">
-    <div class="menu-btn"><i class="fas fa-bars"></i></div>
-    <div class="title">Tyor V1</div>
-    <img id="profilePic" src="https://via.placeholder.com/35" class="profile-pic" alt="Profile">
-    <input type="file" id="uploadProfile" accept="image/*" style="display:none">
-//    <img src="https://via.placeholder.com/35" alt="Profile" class="profile-pic">
-  </div>
+    <div class="content">
+        <div class="welcome" id="welcome-message">Selamat Datang, User!</div>
+        <div class="user-info">Anda berhasil masuk ke Sparta Protocol.</div>
+        <p class="user-info" id="expiry-info"></p>
+        <button class="logout-btn" onclick="performLogout()">Logout Sekarang</button>
+        
+        <h2 style="margin-top: 50px; color: #2B30E2;">Fitur Utama...</h2>
+        </div>
 
-  <!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-  <span class="close-btn"><i class="fas fa-times"></i></span>
-
-  <div style="text-align:center; font-size:18px; font-weight:bold; margin:20px 0; color:#9d4dff;">
-    TYOR DESTROYER
-  </div>
-
-  <div style="margin:20px 0;">
-    <h4 style="color:#aaa; margin-bottom:10px;"># Settings</h4>
-    <div class="sidebar-item" onclick="window.location.href='account.html'">
-      <i class="fas fa-user-cog"></i> Account
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle modal-icon"></i>
+            <div id="modal-title" class="modal-title">Peringatan Akun!</div>
+            <p id="modal-text" class="modal-text">Pesan kesalahan akan muncul di sini.</p>
+            <div class="modal-buttons">
+                <button id="btn-buy-modal" onclick="window.open('https://t.me/Farelmod', '_blank')">Beli Akun</button>
+                <button id="btn-logout-modal">Logout</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div style="margin:20px 0;">
-    <h4 style="color:#aaa; margin-bottom:10px;"># Media</h4>
-    <div class="sidebar-item" onclick="window.open('https://t.me/Farelmod','_blank')">
-      <i class="fas fa-code"></i> Developer
-    </div>
-  </div>
+    <script>
+        // --- KRITIS: Salin/Tempel semua fungsi helper (session, fetch) dari login.html di sini ---
+        const raw_url = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
+        const CHECK_INTERVAL = 5000; // Pengecekan setiap 5 detik (5000ms)
 
-  <div style="margin:20px 0;">
-    <div class="sidebar-item" onclick="logout()">
-      <i class="fas fa-sign-out-alt"></i> Logout
-    </div>
-  </div>
-</div>
+        function clearSession() {
+            localStorage.removeItem('app_session');
+        }
 
-  <!-- Title Section -->
-  <div class="title-section">
-    <h1>Tyor V0.1</h1>
-    <h2>Powered By @Farelmod</h2>
-    <h2>Developed By @FarellXyz.</h2>
-  </div>
+        function getSession() {
+            try {
+                return JSON.parse(localStorage.getItem('app_session'));
+            } catch (e) { return null; }
+        }
 
-  <!-- Menu Grid -->
-  <div class="menu-grid">
-    <div class="menu-item disabled"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
-    <div class="menu-item disabled"><i class="fas fa-comments"></i><span>Chat</span></div>
-    <div class="menu-item"><i class="fas fa-user-cog"></i><span>Account</span></div>
-  </div>
+        async function fetchAccessList() {
+            try {
+                const resp = await fetch(raw_url, { cache: 'no-store' });
+                if (!resp.ok) throw new Error('Gagal mengambil akses.json: ' + resp.status);
+                const txt = await resp.text();
+                let data;
+                try { data = JSON.parse(txt); }
+                catch (e) {
+                    const arrMatch = txt.match(/\[([\s\S]*)\]/);
+                    if (arrMatch) {
+                        try { data = JSON.parse('[' + arrMatch[1] + ']'); } catch (e2) { data = null; }
+                    }
+                }
+                if (!data) return null;
+                if (Array.isArray(data)) return data;
+                if (typeof data === 'object') {
+                    const vals = Object.values(data).filter(v => typeof v === 'object');
+                    if (vals.length) return vals;
+                }
+                return null;
+            } catch (err) {
+                console.error("Error fetching access list:", err);
+                return null;
+            }
+        }
+        
+        // --- FUNGSI MODAL DASHBOARD ---
+        const customModal = document.getElementById('custom-modal');
+        const modalText = document.getElementById('modal-text');
+        const modalTitle = document.getElementById('modal-title');
+        const btnLogoutModal = document.getElementById('btn-logout-modal');
 
-  <!-- Telegram Banner -->
-  <div class="telegram-banner" onclick="window.open('https://t.me/Farelmod', '_blank')">
-    🔥 Telegram Channel: Join To Get More Info!
-  </div>
+        function showCustomModal(message, title = "Peringatan!") {
+            modalTitle.textContent = title;
+            modalText.textContent = message;
+            customModal.style.display = 'flex';
+            setTimeout(() => customModal.classList.add('show'), 10);
+            // Nonaktifkan tombol agar user hanya bisa klik tombol modal
+            document.body.style.pointerEvents = 'none';
+            customModal.style.pointerEvents = 'auto';
+        }
 
-  <!-- Server Stats -->
-  <div class="server-stats">
-    <h3>Server Stats</h3>
-    <p>👥 Online Users: <span id="onlineUsers">0</span></p>
-    <p>🚀 Active Sender: <span id="activeSender">0</span></p>
-  </div>
+        // Aksi Logout Penuh
+        function performLogout() {
+            clearSession();
+            window.location.href = "login.html";
+        }
+        
+        btnLogoutModal.addEventListener('click', function() {
+            performLogout();
+        });
 
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <div class="nav-item active"><i class="fas fa-home"></i><span>Home</span></div>
-    <div class="nav-item"><i class="fas fa-phone"></i><span>Bug</span></div>
-    <div class="nav-item"><i class="fas fa-play"></i><span>Spam</span></div>
-    <div class="nav-item"><i class="fas fa-comment"></i><span>Chat</span></div>
-  </div>
 
-  <script>
-    // Sidebar toggle
-    const sidebar = document.getElementById("sidebar");
-    document.querySelector(".menu-btn").onclick = () => sidebar.classList.add("active");
-    document.querySelector(".close-btn").onclick = () => sidebar.classList.remove("active");
+        // --- LOGIKA UTAMA: REAL-TIME DELETION CHECK ---
+        let checkIntervalId;
 
-  const profilePic = document.getElementById("profilePic");
-   const uploadProfile = document.getElementById("uploadProfile");
+        function checkRealTimeDeletion(username) {
+            checkIntervalId = setInterval(async () => {
+                const list = await fetchAccessList();
+                if (!list) {
+                    // Jika gagal koneksi, biarkan saja dan coba lagi di interval berikutnya
+                    console.warn("Gagal mendapatkan data akses untuk real-time check. Mencoba lagi...");
+                    return; 
+                }
 
-   // load dari localStorage
-    const savedPic = localStorage.getItem("profile_pic");
-     if (savedPic) profilePic.src = savedPic;
+                const found = list.find(u => (u.username == username));
 
-   // klik foto → trigger input file
-     profilePic.onclick = () => uploadProfile.click();
+                if (!found) {
+                    // AKUN TELAH DIHAPUS DARI GITHUB DATABASE
+                    clearInterval(checkIntervalId); // Hentikan pengecekan
+                    clearSession(); // Hapus sesi lokal
 
-   // saat pilih gambar
-   uploadProfile.onchange = (e) => {
-     const file = e.target.files[0];
-     if (!file) return;
-     const reader = new FileReader();
-     reader.onload = () => {
-    profilePic.src = reader.result;
-    localStorage.setItem("profile_pic", reader.result);
-      };
-    reader.readAsDataURL(file);
-  };
+                    const notifMsg = "Akun Anda Telah Dihapus, Silahkan Beli Lagi";
+                    
+                    // Tampilkan Modal Deletion
+                    showCustomModal(notifMsg, "Akun Dihapus!");
+                    
+                    // Kita juga bisa tambahkan notifikasi browser jika diizinkan
+                    // tryShowBrowserNotification('Akun Dihapus', notifMsg);
+                }
+            }, CHECK_INTERVAL);
+        }
 
-   function logout() {
-      localStorage.removeItem("app_session");
-      window.location.href = "index.html";
-    }
+        // --- DASHBOARD ON LOAD ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const session = getSession();
+            
+            if (!session) {
+                // Jika tidak ada sesi saat masuk dashboard, paksa kembali ke login
+                window.location.href = "login.html";
+                return;
+            }
 
-    // Online Users detector (sederhana, hanya simulasi)
-    function updateOnlineUsers() {
-      // Bisa dihubungkan ke server, untuk sekarang random 1-10
-      document.getElementById("onlineUsers").textContent = Math.floor(Math.random() * 10) + 1;
-    }
-    updateOnlineUsers();
-    setInterval(updateOnlineUsers, 5000);
+            // Tampilkan info user (opsional)
+            document.getElementById('welcome-message').textContent = `Selamat Datang, ${session.username}!`;
+            
+            if (session.expiresAt !== Infinity) {
+                const expiryDate = new Date(session.expiresAt).toLocaleDateString();
+                document.getElementById('expiry-info').textContent = `Masa Aktif: ${session.durasi} (berakhir ${expiryDate})`;
+            } else {
+                document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent`;
+            }
 
-    // Active Sender default = 0
-    document.getElementById("activeSender").textContent = 0;
 
-    // Cek session: kalau tidak ada session → kembali ke login
-    const session = localStorage.getItem("app_session");
-    if (!session) {
-      window.location.href = "index.html";
-    }
-  </script>
+            // Mulai pengecekan real-time
+            console.log(`Memulai pengecekan real-time untuk ${session.username}...`);
+            checkRealTimeDeletion(session.username);
+        });
+
+    </script>
 </body>
 </html>
