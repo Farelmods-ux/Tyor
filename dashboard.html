@@ -24,14 +24,19 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #141414; /* Background Navbar lebih gelap */
-            border-top: 2px solid rgba(43, 66, 226, 0.2);
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
-            padding: 10px 0;
+            /* Latar belakang lebih gelap dan tegas */
+            background: #0d0d0d; 
+            /* Border atas lebih tebal dan berwarna untuk pemisah visual */
+            border-top: 3px solid #1B47F1; 
+            /* Bayangan yang lebih jelas */
+            box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
+            /* Padding ditingkatkan agar ada ruang di atas dan bawah */
+            padding: 10px 0; 
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 50;
+            backdrop-filter: blur(5px);
         }
 
         .nav-item {
@@ -39,42 +44,50 @@
             cursor: pointer;
             position: relative;
             padding: 5px 0;
-            min-width: 60px; /* Lebar minimum agar tombol tidak terlalu sempit */
+            min-width: 60px; 
+            transition: transform 0.2s, color 0.2s;
+        }
+        
+        /* Efek hover untuk interaksi */
+        .nav-item:hover {
+             transform: translateY(-2px);
         }
 
         .nav-icon {
             font-size: 24px;
-            color: #555; /* Warna icon default */
+            color: #404040; /* Warna icon default abu-abu gelap */
             transition: color 0.3s;
         }
 
         /* Style untuk icon yang aktif/terpilih */
         .nav-item.active .nav-icon {
-            color: #1B47F1; /* Warna biru untuk icon aktif */
+            color: #1B47F1; 
             text-shadow: 0 0 5px #1B47F1;
         }
         
-        /* Teks kecil di bawah ikon (Bug, Home, dll.) */
+        /* Teks kecil di bawah ikon (Bug, Home, dll.) - LOGIKA FLOATING TEXT */
         .nav-text {
             position: absolute;
             left: 50%;
-            transform: translateX(-50%) translateY(5px); /* Posisikan di bawah icon */
-            font-size: 10px;
+            /* Posisikan di atas ikon (Mengambang) */
+            transform: translateX(-50%) translateY(-40px); 
+            font-size: 12px;
             font-weight: 600;
-            color: #F81CF8; /* Warna teks seperti di foto (ungu/pink) */
-            background: rgba(248, 28, 248, 0.1);
-            padding: 2px 6px;
-            border-radius: 5px;
-            display: none; /* KRITIS: Sembunyikan default */
+            color: white; /* Teks putih agar lebih terlihat */
+            background: #F81CF8; /* Background ungu/pink solid */
+            padding: 4px 10px;
+            border-radius: 10px; /* Bentuk pill */
+            display: none; 
             white-space: nowrap;
-            transition: opacity 0.3s;
+            box-shadow: 0 0 10px #F81CF8;
+            z-index: 60;
         }
 
         /* Tampilkan teks hanya pada item yang aktif */
         .nav-item.active .nav-text {
             display: block;
         }
-
+        
         /* --- Custom Modal Pop-up Styles (Sama seperti sebelumnya) --- */
         .modal-overlay {
             position: fixed;
@@ -344,4 +357,4 @@
 
     </script>
 </body>
-</html>
+ </html>
