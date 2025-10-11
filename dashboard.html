@@ -9,16 +9,73 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* CSS umum (dari login.html) */
+        /* CSS umum */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: black; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; }
-        .content { padding: 50px; text-align: center; }
+        body { background: black; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; position: relative; }
+        .content { padding: 50px 20px 100px 20px; text-align: center; }
         .welcome { color: #1B47F1; font-size: 36px; margin-bottom: 20px; text-shadow: 0 0 10px #0917D7; }
         .user-info { font-size: 18px; color: #B3C0FF; }
         .logout-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 30px; }
 
 
-        /* --- Custom Modal Pop-up Styles (WAJIB ADA DI DASHBOARD) --- */
+        /* --- Navbar Horizontal Styles --- */
+        .navbar-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #141414; /* Background Navbar lebih gelap */
+            border-top: 2px solid rgba(43, 66, 226, 0.2);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            padding: 5px 0;
+            min-width: 60px; /* Lebar minimum agar tombol tidak terlalu sempit */
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            color: #555; /* Warna icon default */
+            transition: color 0.3s;
+        }
+
+        /* Style untuk icon yang aktif/terpilih */
+        .nav-item.active .nav-icon {
+            color: #1B47F1; /* Warna biru untuk icon aktif */
+            text-shadow: 0 0 5px #1B47F1;
+        }
+        
+        /* Teks kecil di bawah ikon (Bug, Home, dll.) */
+        .nav-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px); /* Posisikan di bawah icon */
+            font-size: 10px;
+            font-weight: 600;
+            color: #F81CF8; /* Warna teks seperti di foto (ungu/pink) */
+            background: rgba(248, 28, 248, 0.1);
+            padding: 2px 6px;
+            border-radius: 5px;
+            display: none; /* KRITIS: Sembunyikan default */
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        /* Tampilkan teks hanya pada item yang aktif */
+        .nav-item.active .nav-text {
+            display: block;
+        }
+
+        /* --- Custom Modal Pop-up Styles (Sama seperti sebelumnya) --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -111,7 +168,8 @@
         <p class="user-info" id="expiry-info"></p>
         <button class="logout-btn" onclick="performLogout()">Logout Sekarang</button>
         
-        <h2 style="margin-top: 50px; color: #2B30E2;">Fitur Utama...</h2>
+        <h2 style="margin-top: 50px; color: #2B30E2;">Fitur Utama Dashboard</h2>
+        <p style="color: #6a6a6a; margin-top: 10px;">Klik tombol di Navbar bawah untuk melihat efek teks.</p>
         </div>
 
     <div id="custom-modal" class="modal-overlay">
@@ -125,11 +183,33 @@
             </div>
         </div>
     </div>
+    
+    <div class="navbar-container">
+        <div class="nav-item active" data-text="Home" id="nav-home">
+            <i class="fas fa-home nav-icon"></i>
+            <div class="nav-text">Home</div>
+        </div>
+        
+        <div class="nav-item" data-text="Bug" id="nav-bug">
+            <i class="fas fa-phone-alt nav-icon"></i>
+            <div class="nav-text">Bug</div>
+        </div>
+
+        <div class="nav-item" data-text="Power" id="nav-power">
+            <i class="fas fa-bolt nav-icon"></i>
+            <div class="nav-text">Power</div>
+        </div>
+
+        <div class="nav-item" data-text="Chat" id="nav-chat">
+            <i class="fas fa-comment nav-icon"></i>
+            <div class="nav-text">Chat</div>
+        </div>
+    </div>
 
     <script>
-        // --- KRITIS: Salin/Tempel semua fungsi helper (session, fetch) dari login.html di sini ---
+        // --- KRITIS: Session dan Fetch Functions dari index.html ---
         const raw_url = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
-        const CHECK_INTERVAL = 5000; // Pengecekan setiap 5 detik (5000ms)
+        const CHECK_INTERVAL = 5000;
 
         function clearSession() {
             localStorage.removeItem('app_session');
@@ -167,7 +247,7 @@
             }
         }
         
-        // --- FUNGSI MODAL DASHBOARD ---
+        // --- FUNGSI MODAL DASHBOARD (Sama seperti sebelumnya) ---
         const customModal = document.getElementById('custom-modal');
         const modalText = document.getElementById('modal-text');
         const modalTitle = document.getElementById('modal-title');
@@ -178,12 +258,10 @@
             modalText.textContent = message;
             customModal.style.display = 'flex';
             setTimeout(() => customModal.classList.add('show'), 10);
-            // Nonaktifkan tombol agar user hanya bisa klik tombol modal
             document.body.style.pointerEvents = 'none';
             customModal.style.pointerEvents = 'auto';
         }
 
-        // Aksi Logout Penuh
         function performLogout() {
             clearSession();
             window.location.href = "index.html";
@@ -194,47 +272,60 @@
         });
 
 
-        // --- LOGIKA UTAMA: REAL-TIME DELETION CHECK ---
+        // --- LOGIKA REAL-TIME DELETION CHECK (Sama seperti sebelumnya) ---
         let checkIntervalId;
 
         function checkRealTimeDeletion(username) {
             checkIntervalId = setInterval(async () => {
                 const list = await fetchAccessList();
-                if (!list) {
-                    // Jika gagal koneksi, biarkan saja dan coba lagi di interval berikutnya
-                    console.warn("Gagal mendapatkan data akses untuk real-time check. Mencoba lagi...");
-                    return; 
-                }
+                if (!list) return; 
 
                 const found = list.find(u => (u.username == username));
 
                 if (!found) {
-                    // AKUN TELAH DIHAPUS DARI GITHUB DATABASE
-                    clearInterval(checkIntervalId); // Hentikan pengecekan
-                    clearSession(); // Hapus sesi lokal
-
-                    const notifMsg = "Akun Anda Telah Dihapus, Silahkan Beli Lagi";
-                    
-                    // Tampilkan Modal Deletion
-                    showCustomModal(notifMsg, "Akun Dihapus!");
-                    
-                    // Kita juga bisa tambahkan notifikasi browser jika diizinkan
-                    // tryShowBrowserNotification('Akun Dihapus', notifMsg);
+                    clearInterval(checkIntervalId);
+                    clearSession();
+                    showCustomModal("Akun Anda Telah Dihapus, Silahkan Beli Lagi", "Akun Dihapus!");
                 }
             }, CHECK_INTERVAL);
         }
+
+        // --- LOGIKA NAVBAR BARU ---
+        const navItems = document.querySelectorAll('.nav-item');
+
+        function setActiveNavItem(clickedItem) {
+            // 1. Hapus class 'active' dari semua item
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 2. Tambahkan class 'active' ke item yang diklik
+            clickedItem.classList.add('active');
+
+            // 3. (Opsional) Tampilkan nama menu di konsol
+            console.log(`Menu diklik: ${clickedItem.getAttribute('data-text')}`);
+            
+            // Di sini Anda bisa menambahkan logika untuk memuat konten dashboard yang berbeda
+        }
+
+        // Tambahkan event listener ke setiap tombol
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                setActiveNavItem(this);
+            });
+        });
+
 
         // --- DASHBOARD ON LOAD ---
         document.addEventListener('DOMContentLoaded', function () {
             const session = getSession();
             
             if (!session) {
-                // Jika tidak ada sesi saat masuk dashboard, paksa kembali ke login
                 window.location.href = "index.html";
                 return;
             }
 
-            // Tampilkan info user (opsional)
+            // Tampilkan info user
             document.getElementById('welcome-message').textContent = `Selamat Datang, ${session.username}!`;
             
             if (session.expiresAt !== Infinity) {
@@ -244,10 +335,11 @@
                 document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent`;
             }
 
-
             // Mulai pengecekan real-time
-            console.log(`Memulai pengecekan real-time untuk ${session.username}...`);
             checkRealTimeDeletion(session.username);
+            
+            // Pastikan Home aktif secara default
+            // navItems[0].classList.add('active'); // Sudah diatur di HTML
         });
 
     </script>
