@@ -5,8 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sparta V0.1 - Dashboard</title>
+    <!-- Firebase SDKs (Menggunakan versi 8.6.8 yang kompatibel dengan <script> tag) -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    
+    <!-- Google Font & Icon -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
 <style>
     /* CSS umum */
@@ -48,7 +53,6 @@
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
         height: 0; 
         padding-bottom: 56.25%; /* Rasio 16:9 */
-        /* Set background agar ruang kosong (pillarboxing) berwarna hitam */
         background: black; 
     }
 
@@ -72,7 +76,6 @@
     .slide-item img {
         width: 100%;
         height: 100%; 
-        /* ✅ PERBAIKAN: Gunakan contain agar gambar potret tidak terpotong. */
         object-fit: contain; 
         display: block;
     }
@@ -250,7 +253,7 @@
         text-align: right;
     }
     
-    /* --- Navbar Horizontal Styles: SUDAH DIPERBAIKI --- */
+    /* --- Navbar Horizontal Styles --- */
     .navbar-container {
         position: fixed;
         bottom: 0;
@@ -261,7 +264,7 @@
         box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
         padding: 5px 0;
         display: flex;
-        justify-content: space-around; /* ✅ KUNCI: Membuat item sejajar horizontal */
+        justify-content: space-around; 
         align-items: center;
         z-index: 50;
         backdrop-filter: blur(5px);
@@ -274,10 +277,10 @@
         min-width: 60px; 
         transition: transform 0.2s, color 0.2s;
         display: flex;
-        flex-direction: column; /* ✅ KUNCI: Membuat icon di atas dan teks di bawah */
+        flex-direction: column; 
         justify-content: center;
         align-items: center;
-        padding: 5px 0; 
+        padding: 0; 
     }
     
     .nav-item:hover {
@@ -295,49 +298,131 @@
         text-shadow: 0 0 5px #1B47F1;
     }
     
-       .nav-text {
-          position: static; 
-          transform: none;
-          font-size: 14px; 
-          font-weight: 500;
-          color: #B3C0FF; 
-          background: none; 
-          padding: 0; 
-          border-radius: 0; 
-          display: block; 
-          white-space: nowrap;
-          box-shadow: none;
-          z-index: 60;
-          line-height: 1.2; 
-         margin-top: 2px; 
-        }
+    .nav-text {
+        position: static; 
+        transform: none;
+        font-size: 14px; 
+        font-weight: 500;
+        color: #B3C0FF; 
+        background: none; 
+        padding: 0; 
+        border-radius: 0; 
+        display: block; 
+        white-space: nowrap;
+        box-shadow: none;
+        z-index: 60;
+        line-height: 1.2; 
+        margin-top: 2px; 
+    }
 
-        /* ... kode CSS setelah navbar ... */
-    </style>
+    /* --- Modal CSS --- */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.7);
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .custom-modal.show {
+        opacity: 1;
+        display: flex; /* Ganti display agar transisi opacity bekerja */
+    }
+
+    .modal-content {
+        background-color: #1a1a1a;
+        margin: 15% auto;
+        padding: 25px;
+        border: 2px solid #1B47F1;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 300px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        text-align: center;
+        color: white;
+    }
+
+    .modal-content h3 {
+        color: #1B47F1;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .modal-content p {
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #ccc;
+    }
+
+    .modal-button {
+        background: #ff4444;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .modal-button:hover {
+        background: #cc3333;
+    }
+</style>
 </head>
 
 <body>
+    <!-- Modal -->
+    <div id="custom-modal" class="custom-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Peringatan!</h3>
+            <p id="modal-text">Sesi Anda telah berakhir atau akun Anda telah dihapus.</p>
+            <button id="btn-logout-modal" class="modal-button">Logout dan Kembali</button>
+        </div>
+    </div>
+
     <div class="header-top">
         <div class="header-title">Sparta V0.1</div>
         <i class="fas fa-user-circle header-icon"></i>
     </div>
-    
+
     <div class="content">
-        
-        <div class="slider-container" id="image-slider">
+        <!-- Selamat Datang Section -->
+        <div style="margin-bottom: 30px;">
+            <p id="welcome-message" class="welcome" style="font-size: 20px; font-weight: 600;"></p>
+            <p id="expiry-info" class="user-info" style="font-size: 14px; margin-top: 5px;"></p>
+        </div>
+
+        <!-- Image Slider -->
+        <div id="image-slider" class="slider-container">
             <div class="slider-wrapper">
-                <div class="slide-item"><img src="https://iili.io/KOHKQsV.jpg" alt="Server 1"></div>
-                <div class="slide-item"><img src="https://iili.io/KOHBbgS.jpg" alt="Server 2"></div>
-                <div class="slide-item"><img src="https://iili.io/KOHC0pn.jpg" alt="Server 3"></div>
-            </div>
-            <div class="beta-overlay">
-                <h3>🔥 Beta Test</h3>
-                <p>This  Apps  Server  Still  On  Beta  Test.</p>
+                <div class="slide-item">
+                    <img src="https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1" onerror="this.src='https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1'" alt="Slider Image 1">
+                    <div class="beta-overlay">
+                        <h3>🔥 Beta Test</h3>
+                        <p>This  Apps  Server  Still  On  Beta  Test.</p>                   
+                    </div>
+                </div>
+                <div class="slide-item">
+                    <img src="https://placehold.co/800x450/7A09FA/ffffff?text=Slide+2" onerror="this.src='https://placehold.co/800x450/7A09FA/ffffff?text=Slide+2'" alt="Slider Image 2">
+                </div>
+                <div class="slide-item">
+                    <img src="https://placehold.co/800x450/F81CF8/ffffff?text=Slide+3" onerror="this.src='https://placehold.co/800x450/F81CF8/ffffff?text=Slide+3'" alt="Slider Image 3">
+                </div>
             </div>
         </div>
 
+        <!-- Menu Buttons -->
         <div class="menu-buttons">
-            <div class="menu-item" onclick="window.open('https://wa.me/628123456789', '_blank')">
+                    <div class="menu-item" onclick="window.open('https://wa.me/628123456789', '_blank')">
                 <div class="menu-icon-wrapper">
                     <i class="fab fa-whatsapp menu-icon"></i>
                 </div>
@@ -357,53 +442,44 @@
             </div>
         </div>
 
-        <div class="telegram-banner" onclick="window.open('https://t.me/Farelmod', '_blank')">
+        <!-- Telegram Banner -->
+        <div class="telegram-banner" onclick="window.open('https://t.me/yourtelegramchannel', '_blank')">
             <div class="telegram-text">
-                <h4 style="color: #ff4444;"><i class="fab fa-telegram-plane"></i> Telegram Channel:</h4>
+                <h4>Join Telegram Channel!</h4>
                 <span>Join To Get More Info!</span>
             </div>
-            <i class="fas fa-chevron-right telegram-icon"></i>
+            <i class="fa-brands fa-telegram telegram-icon"></i>
         </div>
 
+        <!-- Server Stats Widget (Penghitung Real-time) -->
         <div class="stats-widget">
-            <div class="stats-title"><i class="fas fa-chart-bar" style="margin-right: 10px;"></i> Server Stats</div>
-            
+            <div class="stats-title">
+                <i class="fas fa-chart-bar" style="margin-right: 10px;"></i> Server Stats</div>            
+            </div>
             <div class="stats-row">
                 <div class="stats-label">
                     <i class="fas fa-users stats-icon" style="color:#1B47F1;"></i> Online Users
                 </div>
                 <div class="stats-value-container">
+                    <!-- ID ini akan diupdate secara real-time oleh Firebase -->
                     <span id="online-users-value" class="stats-value">0</span>
                 </div>
             </div>
-            
-            <div class="stats-row" style="border-bottom: none;">
+            <div class="stats-row">
                 <div class="stats-label">
                     <i class="fas fa-rocket stats-icon" style="color:#ff4444;"></i> Active Sender
                 </div>
                 <div class="stats-value-container">
+                    <!-- ID ini juga akan diupdate (Simulasi) -->
                     <span id="active-sender-value" class="stats-value">0</span>
                 </div>
             </div>
         </div>
-
-
     </div>
 
-    <div id="custom-modal" class="modal-overlay">
-        <div class="modal-content">
-            <i class="fas fa-exclamation-triangle modal-icon"></i>
-            <div id="modal-title" class="modal-title">Peringatan Akun!</div>
-            <p id="modal-text" class="modal-text">Pesan kesalahan akan muncul di sini.</p>
-            <div class="modal-buttons">
-                <button id="btn-buy-modal" onclick="window.open('https://t.me/Farelmod', '_blank')">Beli Akun</button>
-                <button id="btn-logout-modal">Logout</button>
-            </div>
-        </div>
-    </div>
-    
-<div class="navbar-container">
-        <div class="nav-item active" id="nav-home">
+    <!-- Navbar Bawah -->
+    <div class="navbar-container">
+            <div class="nav-item active" id="nav-home">
             <i class="fas fa-home nav-icon"></i>
             <div class="nav-text">Home</div>
         </div>
@@ -423,16 +499,35 @@
             <div class="nav-text">Chat</div>
         </div>
     </div>
-    
-    <script>
-        // --- KRITIS: Session dan Fetch Functions dari index.html ---
-        const RAW_URL_AKSES = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
-        // URL Baru untuk menyimpan data status user (membutuhkan file JSON baru)
-        const RAW_URL_USER_STATUS = "https://raw.githubusercontent.com/Farelmods-ux/database/main/user_status.json";
-        
-        const CHECK_INTERVAL = 5000; // Cek penghapusan akun
-        const USER_STATUS_INTERVAL = 30000; // Cek status user (30 detik)
 
+    <script>
+        // --- KONFIGURASI FIREBASE ANDA ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFqY8y8uQjyFA39m0LFt5C1qYf0AOucvU",
+            authDomain: "realtime-database-projec-79515.firebaseapp.com",
+            databaseURL: "https://realtime-database-projec-79515-default-rtdb.firebaseio.com",
+            projectId: "realtime-database-projec-79515",
+            storageBucket: "realtime-database-projec-79515.firebasestorage.app",
+            messagingSenderId: "87990196443",
+            appId: "1:87990196443:web:a0b11f82680276292a14fe"
+        };
+
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const onlineRef = db.ref('onlineUsers'); // Node khusus di Realtime Database
+        
+        // Konstanta Heartbeat
+        const HEARTBEAT_INTERVAL = 15000; // Kirim heartbeat setiap 15 detik
+        const USER_TIMEOUT = 30000; // User dianggap offline jika tidak ada heartbeat selama 30 detik
+        const CHECK_INTERVAL = 10000; // Interval cek hapus akun
+
+        // --- KRITIS: Session dan Fetch Functions dari index.html ---
+        // URL sumber data akses (Sama seperti di index.html)
+        const RAW_URL_AKSES = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
+        
         function clearSession() {
             localStorage.removeItem('app_session');
         }
@@ -442,13 +537,13 @@
                 return JSON.parse(localStorage.getItem('app_session'));
             } catch (e) { return null; }
         }
-
+        
+        // Fungsi fetch JSON dari index.html
         async function fetchJSON(url) {
             try {
                 const resp = await fetch(url, { cache: 'no-store' });
                 if (!resp.ok) throw new Error('Gagal mengambil JSON: ' + resp.status);
                 const txt = await resp.text();
-                // Mencoba parse, mengakomodasi format array atau objek
                 let data;
                 try { data = JSON.parse(txt); } catch (e) {
                     const arrMatch = txt.match(/\[([\s\S]*)\]/);
@@ -461,7 +556,7 @@
                 if (typeof data === 'object') {
                     const vals = Object.values(data).filter(v => typeof v === 'object');
                     if (vals.length) return vals;
-                    return data; // Kembalikan objek jika bukan array
+                    return data; 
                 }
                 return null;
             } catch (err) {
@@ -484,13 +579,20 @@
             modalTitle.textContent = title;
             modalText.textContent = message;
             customModal.style.display = 'flex';
+            // Paksa reflow untuk transisi opacity
             setTimeout(() => customModal.classList.add('show'), 10);
-            // Menonaktifkan interaksi di luar modal
+            
+            // Nonaktifkan interaksi di body kecuali modal
             document.body.style.pointerEvents = 'none';
             customModal.style.pointerEvents = 'auto';
         }
 
         function performLogout() {
+            const session = getSession();
+            // Hapus user dari online list saat logout (penting!)
+            if (session && session.username) {
+                 onlineRef.child(session.username).remove();
+            }
             clearSession();
             window.location.href = "index.html";
         }
@@ -508,119 +610,121 @@
                 const list = await fetchAccessList();
                 if (!list) return; 
 
+                // Cek apakah username masih ada di list akses
                 const found = list.find(u => (u.username == username));
 
                 if (!found) {
                     clearInterval(checkDeletionIntervalId);
                     clearSession();
+                    // Hapus data online saat akun dihapus
+                    onlineRef.child(username).remove();
                     showCustomModal("Akun Anda Telah Dihapus, Silahkan Beli Lagi", "Akun Dihapus!");
                 }
             }, CHECK_INTERVAL);
         }
         
-        // --- LOGIKA ACTIVE/INACTIVE USER COUNTER BARU ---
+        // --- LOGIKA HEARTBEAT OTOMATIS (FIREBASE) ---
         
-        // Catatan: Karena kita tidak memiliki server backend untuk MENGUPDATE user_status.json
-        // Logika di bawah hanya bisa MEMBACA nilai dari user_status.json.
-        // Untuk tujuan demonstrasi dan memenuhi permintaan, kita akan mensimulasikan
-        // bahwa file JSON dapat diperbarui oleh pengguna lain.
-        
-        async function updateServerStats() {
-             const session = getSession();
-             if (!session) return;
-             
-             // 1. Simulasikan pengiriman 'heartbeat' ke server (di lingkungan statik ini, ini adalah titik kegagalan)
-             // Jika ini adalah server, Anda akan mengirim AJAX ke server untuk mencatat aktivitas.
-             // Di sini, kita hanya membaca.
-             
-             // 2. Ambil data status terbaru
-             const statusData = await fetchJSON(RAW_URL_USER_STATUS);
-             
-             if (statusData && typeof statusData === 'object') {
-                 // Diasumsikan statusData memiliki struktur { active_users: N, inactive_users: M }
-                 const activeUsers = statusData.active_users || 0;
-                 const inactiveUsers = statusData.inactive_users || 0;
-                 
-                 // Update tampilan
-                 document.getElementById('online-users-value').textContent = activeUsers;
-                 document.getElementById('active-sender-value').textContent = inactiveUsers;
-                 
-             } else {
-                 console.warn("Gagal mendapatkan/menganalisis user_status.json. Menampilkan default 0.");
-                 document.getElementById('online-users-value').textContent = '0';
-                 document.getElementById('active-sender-value').textContent = '0';
-             }
+        function startHeartbeat(username) {
+            const userRef = onlineRef.child(username);
+            
+            // 1. Set onDisconnect: Hapus data jika user menutup browser/tab secara tiba-tiba
+            userRef.onDisconnect().remove(); 
+
+            // 2. Kirim "Heartbeat" (timestamp server) secara berkala
+            setInterval(() => {
+                userRef.set({ 
+                    lastActive: firebase.database.ServerValue.TIMESTAMP 
+                });
+            }, HEARTBEAT_INTERVAL); 
         }
-        
-        // --- LOGIKA IMAGE SLIDER (CAROUSEL) ---
+
+        // --- LOGIKA UPDATE STATS (Mendengarkan Realtime Database) ---
+
+        function setupOnlineUserListener() {
+            const onlineUsersValue = document.getElementById('online-users-value');
+            const activeSenderValue = document.getElementById('active-sender-value');
+            
+            // Dengarkan perubahan data di node 'onlineUsers' secara Real-time
+            onlineRef.on('value', (snapshot) => {
+                let onlineCount = 0;
+                let activeSender = 0; 
+                
+                const users = snapshot.val();
+                const currentTime = Date.now();
+                
+                if (users) {
+                    const userList = Object.keys(users);
+                    
+                    // Hitung user yang lastActive-nya masih dalam batas waktu 30 detik
+                    for (let username of userList) {
+                        const lastActive = users[username].lastActive || 0;
+                        
+                        // User dianggap online jika heartbeat kurang dari USER_TIMEOUT
+                        if (currentTime - lastActive < USER_TIMEOUT) {
+                            onlineCount++;
+                        }
+                    }
+                    
+                    // Simulasikan Active Sender: 80% dari Online Users + random kecil
+                    activeSender = Math.max(0, Math.floor(onlineCount * 0.8) + Math.floor(Math.random() * 3));
+                }
+                
+                // Update tampilan
+                onlineUsersValue.textContent = onlineCount.toString();
+                activeSenderValue.textContent = activeSender.toString();
+            });
+        }
+
+        // --- LOGIKA IMAGE SLIDER & NAVBAR (Tidak Berubah) ---
         const slider = document.getElementById('image-slider');
         const sliderWrapper = slider.querySelector('.slider-wrapper');
         const totalSlides = sliderWrapper.querySelectorAll('.slide-item').length;
         let currentSlide = 0;
 
-        // Fungsi untuk menggeser slide
         function goToSlide(index) {
-            // Pastikan index tetap berada di antara 0 dan totalSlides - 1
-            if (index >= totalSlides) {
-            // Jika mencapai akhir, kembali ke slide pertama (0)
-            index = 0;
-        }
-        if (index < 0) {
-            // Jika mundur dari slide pertama, pergi ke slide terakhir
-            index = totalSlides - 1;
-        }
-     
+            if (index >= totalSlides) { index = 0; }
+            if (index < 0) { index = totalSlides - 1; }
             currentSlide = index;
-            // Perhitungan offset: (Current Slide Index * 100) / Total Slides (3)
-           // Contoh: Slide 1 (index 0) -> 0%
-          // Contoh: Slide 2 (index 1) -> 33.333% (100/3)
-         // Contoh: Slide 3 (index 2) -> 66.666% (200/3)
-           const offset = (-currentSlide * 100) / totalSlides;
-    
-           sliderWrapper.style.transform = `translateX(${offset}%)`; 
+            const offset = (-currentSlide * 100) / totalSlides;
+            sliderWrapper.style.transform = `translateX(${offset}%)`; 
         }
 
-        // Auto slide setiap 5 detik
         setInterval(() => {
             goToSlide(currentSlide + 1);
         }, 5000);
         
-        // Tambahkan event listener untuk menggeser (swipe)
         let startX = 0;
         let endX = 0;
         
         slider.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
-            sliderWrapper.style.transition = 'none'; // Matikan transisi saat swipe
+            sliderWrapper.style.transition = 'none'; 
         });
         
         slider.addEventListener('touchmove', (e) => {
             endX = e.touches[0].clientX;
             const diff = endX - startX;
-            const maxDiff = slider.offsetWidth / 2;
             const currentOffset = -currentSlide * slider.offsetWidth;
             sliderWrapper.style.transform = `translateX(${currentOffset + diff}px)`;
         });
         
         slider.addEventListener('touchend', () => {
             const diff = endX - startX;
-            const threshold = 50; // Jarak minimal swipe
-            sliderWrapper.style.transition = 'transform 0.3s ease-in-out'; // Hidupkan transisi
+            const threshold = 50; 
+            sliderWrapper.style.transition = 'transform 0.3s ease-in-out'; 
             
             if (diff > threshold) {
-                // Swipe ke kanan (slide sebelumnya)
                 goToSlide(currentSlide - 1);
             } else if (diff < -threshold) {
-                // Swipe ke kiri (slide berikutnya)
                 goToSlide(currentSlide + 1);
             } else {
-                // Tidak ada swipe yang signifikan, kembalikan posisi
                 goToSlide(currentSlide);
             }
         });
 
 
-        // --- LOGIKA NAVBAR ---
+        // LOGIKA NAVBAR
         const navItems = document.querySelectorAll('.nav-item');
 
         function setActiveNavItem(clickedItem) {
@@ -628,7 +732,15 @@
                 item.classList.remove('active');
             });
             clickedItem.classList.add('active');
-        }
+            
+ /*           // Logika khusus untuk tombol Logout (memunculkan modal)
+            if (clickedItem.getAttribute('data-text') === 'Logout') {
+                 showCustomModal('Apakah Anda yakin ingin logout?', 'Konfirmasi Logout');
+            } else {
+                // Di sini Anda bisa menambahkan logika untuk memuat konten dashboard yang berbeda
+                console.log(`Menu diklik: ${clickedItem.getAttribute('data-text')}`);
+            }
+        }*/
 
         navItems.forEach(item => {
             item.addEventListener('click', function() {
@@ -637,7 +749,7 @@
         });
 
 
-        // --- DASHBOARD ON LOAD & MASTER INTERVAL ---
+        // --- DASHBOARD ON LOAD & MASTER INITIATION ---
         document.addEventListener('DOMContentLoaded', function () {
             const session = getSession();
             
@@ -646,33 +758,25 @@
                 return;
             }
 
-            // Bagian ini di HAPUS/NONAKTIFKAN sesuai permintaan
-            /*
             // Tampilkan info user
             const displayUsername = session.username.charAt(0).toUpperCase() + session.username.slice(1);
             document.getElementById('welcome-message').textContent = `Selamat Datang, ${displayUsername}!`;
             
             if (session.expiresAt !== Infinity) {
-                // Tambahkan 'Owner' jika role adalah 'owner'
                 const roleText = session.role === 'owner' ? ' Owner' : '';
-                
-                // Format tanggal ke 1/1/1970
                 const expiryDate = new Date(session.expiresAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-                
                 document.getElementById('expiry-info').textContent = `Masa Aktif: ${session.durasi}${roleText} (berakhir ${expiryDate})`;
             } else {
-                // Akun Permanent
                 const roleText = session.role === 'owner' ? ' Owner' : '';
                 document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent${roleText} (Tidak akan dihapus)`;
             }
-            */
 
             // Mulai pengecekan real-time (Penghapusan Akun)
             checkRealTimeDeletion(session.username);
             
-            // Mulai pengecekan status server (Active/Inactive User)
-            updateServerStats(); // Panggil pertama kali
-            setInterval(updateServerStats, USER_STATUS_INTERVAL); // Panggil berulang
+            // Mulai logika Heartbeat dan Listener Online User (OTOMATIS)
+            setupOnlineUserListener();
+            startHeartbeat(session.username); 
 
             // Inisialisasi slider
             goToSlide(0);
@@ -680,4 +784,4 @@
 
     </script>
 </body>
-</html>
+    </html>
