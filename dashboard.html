@@ -39,21 +39,27 @@
             cursor: pointer;
         }
 
-        /* --- Image Slider (Carousel) Styles --- */
+        /* --- Image Slider (Carousel) Styles (PERUBAHAN DI SINI) --- */
         .slider-container {
             position: relative;
             overflow: hidden;
             border-radius: 15px;
             margin-top: 15px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            height: 200px; /* Tinggi tetap */
+            /* Hapus height: 200px; */
+            height: 0; 
+            padding-bottom: 56.25%; /* Rasio 16:9 */
         }
 
         .slider-wrapper {
             display: flex;
             transition: transform 0.3s ease-in-out;
             width: 300%; /* 3 gambar */
-            height: 100%;
+            position: absolute; /* PENTING: Untuk mengisi .slider-container */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         .slide-item {
@@ -64,7 +70,7 @@
 
         .slide-item img {
             width: 100%;
-            height: 200px;
+            height: 100%; /* PENTING: Gunakan 100% tinggi kontainer */
             object-fit: cover;
             display: block;
         }
@@ -257,8 +263,7 @@
             padding: 15px 0; 
         }
 
-/* --- Navbar Horizontal Styles (Perubahan di sini) --- */
-        
+       /* --- Navbar Horizontal Styles (PERUBAHAN DI SINI) --- */
         .navbar-container {
             position: fixed;
             bottom: 0;
@@ -267,12 +272,15 @@
             background: #0d0d0d; 
             border-top: 3px solid #1B47F1; 
             box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
-            padding: 10px 0; 
+            padding: 5px 0; /* Padding vertikal disesuaikan */
             display: flex;
+            /* Ubah ini: Kita hanya perlu justify-content space-around */
             justify-content: space-around;
             align-items: center;
             z-index: 50;
             backdrop-filter: blur(5px);
+            /* Hapus flex-direction: column yang salah dari perbaikan sebelumnya */
+            /* flex-direction: column; */ 
         }
 
         .nav-item {
@@ -282,8 +290,14 @@
             padding: 5px 0;
             min-width: 60px; 
             transition: transform 0.2s, color 0.2s;
+            /* Ini adalah kunci: Menata icon dan text secara vertikal */
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            padding: 5px 0; /* Tambahkan kembali padding vertikal untuk item */
         }
-        
+
         .nav-item:hover {
              transform: translateY(-2px);
         }
@@ -298,33 +312,25 @@
             color: #1B47F1; 
             text-shadow: 0 0 5px #1B47F1;
         }
-        
-        /* PERUBAHAN KRITIS DI SINI */
+
+       /* PERUBAHAN UTAMA: Hapus background, ubah posisi dan ukuran teks */
         .nav-text {
-            /* Hapus absolute position dan transform yang memindahkannya ke atas */
             position: static; 
-            transform: none;
-            
-            /* Teks sekarang berada di bawah ikon secara alami */
-            font-size: 14px; /* Ukuran teks sedang (Medium) */
+            transform: none; 
+            font-size: 14px; /* Ukuran sedang */
             font-weight: 500;
-            color: #B3C0FF; /* Warna teks biasa */
-            
-            /* Hapus background dan shadow yang tidak diinginkan */
+            color: #B3C0FF; 
             background: none; 
-            padding: 0; /* Hapus padding */
+            padding: 0; 
             border-radius: 0; 
-            display: block; /* Pastikan teks ada di baris baru */
+            display: block; 
             white-space: nowrap;
             box-shadow: none;
             z-index: 60;
-        }
-        
-        /* Teks harus selalu terlihat, Hapus logika 'active' untuk menampilkan teks */
-        /* .nav-item.active .nav-text {
-            display: block;
-        } */
-
+            line-height: 1.2; 
+            /* Tambahkan sedikit margin atas agar ada jarak dari icon */
+            margin-top: 2px;
+        }       
 
         /* Tambahan: Sesuaikan padding nav-item agar ikon dan teks lebih rapat */
         .nav-item {
@@ -595,11 +601,24 @@
 
         // Fungsi untuk menggeser slide
         function goToSlide(index) {
-            if (index >= totalSlides) index = 0;
-            if (index < 0) index = totalSlides - 1;
+            // Pastikan index tetap berada di antara 0 dan totalSlides - 1
+            if (index >= totalSlides) {
+            // Jika mencapai akhir, kembali ke slide pertama (0)
+            index = 0;
+        }
+        if (index < 0) {
+            // Jika mundur dari slide pertama, pergi ke slide terakhir
+            index = totalSlides - 1;
+        }
+     
             currentSlide = index;
-            const offset = -currentSlide * 100;
-            sliderWrapper.style.transform = `translateX(${offset / totalSlides}%)`; 
+            // Perhitungan offset: (Current Slide Index * 100) / Total Slides (3)
+           // Contoh: Slide 1 (index 0) -> 0%
+          // Contoh: Slide 2 (index 1) -> 33.333% (100/3)
+         // Contoh: Slide 3 (index 2) -> 66.666% (200/3)
+           const offset = (-currentSlide * 100) / totalSlides;
+    
+           sliderWrapper.style.transform = `translateX(${offset}%)`; 
         }
 
         // Auto slide setiap 5 detik
@@ -702,4 +721,4 @@
 
     </script>
 </body>
-        </html>
+    </html>
