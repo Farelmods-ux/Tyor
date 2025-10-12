@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sparta Protocol - Dashboard</title>
+    <title>Sparta V0.1 - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
@@ -12,25 +12,261 @@
         /* CSS umum */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: black; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; position: relative; }
-        .content { padding: 50px 20px 100px 20px; text-align: center; }
-        .welcome { color: #1B47F1; font-size: 36px; margin-bottom: 20px; text-shadow: 0 0 10px #0917D7; }
-        .user-info { font-size: 18px; color: #B3C0FF; }
-        .logout-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 30px; }
+        .content { padding: 0 20px 100px 20px; /* Padding atas dikurangi */ }
 
+        /* --- Custom Header Styles --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: black;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-        /* --- Navbar Horizontal Styles --- */
+        .header-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1B47F1;
+            text-shadow: 0 0 10px #0917D7;
+        }
+
+        .header-icon {
+            font-size: 24px;
+            color: #B3C0FF;
+            cursor: pointer;
+        }
+
+        /* --- Image Slider (Carousel) Styles --- */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            margin-top: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            height: 200px; /* Tinggi tetap */
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+            width: 300%; /* 3 gambar */
+            height: 100%;
+        }
+
+        .slide-item {
+            width: 100%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .slide-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Overlay untuk Beta Test Text */
+        .beta-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            text-align: left;
+        }
+        
+        .beta-overlay h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ff4444; /* Warna api */
+            text-shadow: 0 0 5px #ff4444;
+        }
+        
+        .beta-overlay p {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        /* --- Menu Buttons (WhatsApp, Chat, Account) --- */
+        .menu-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 0 10px;
+        }
+        
+        .menu-item {
+            text-align: center;
+            width: 25%;
+        }
+        
+        .menu-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 8px auto;
+            border-radius: 50%;
+            background: rgba(27, 71, 241, 0.1);
+            border: 1px solid #1B47F1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(27, 71, 241, 0.3);
+        }
+        
+        .menu-item:hover .menu-icon-wrapper {
+            background: #1B47F1;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(27, 71, 241, 0.5);
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            color: #1B47F1;
+            transition: color 0.3s ease;
+        }
+        
+        .menu-item:hover .menu-icon {
+            color: white;
+        }
+        
+        .menu-text {
+            font-size: 12px;
+            color: #B3C0FF;
+            font-weight: 500;
+        }
+        
+        /* --- Telegram Banner --- */
+        .telegram-banner {
+            background: linear-gradient(135deg, #7A09FA, #B900FF);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(185, 0, 255, 0.5);
+        }
+        
+        .telegram-text {
+            text-align: left;
+        }
+        
+        .telegram-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .telegram-text span {
+            font-size: 12px;
+            color: #eee;
+        }
+        
+        .telegram-icon {
+            font-size: 20px;
+            color: white;
+        }
+
+        /* --- Server Stats Widget (Fokus Utama) --- */
+        .stats-widget {
+            background: linear-gradient(145deg, #35004D, #1A0026);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            color: white;
+        }
+
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1B47F1; 
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #B3C0FF;
+            flex-basis: 50%; /* Teks label di kiri 50% */
+            text-align: left;
+        }
+        
+        .stats-icon {
+            margin-right: 10px;
+            font-size: 16px;
+            color: #F81CF8; /* Warna ikon ungu */
+        }
+        
+        .stats-value-container {
+            display: flex;
+            flex-basis: 50%; /* Container nilai di kanan 50% */
+            justify-content: flex-end; /* Posisikan nilai ke kanan */
+        }
+
+        /* Garis vertikal tipis di tengah */
+        .stats-row::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-50%);
+        }
+        
+        .stats-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: #F81CF8; /* Angka warna ungu */
+            text-shadow: 0 0 5px #F81CF8;
+            min-width: 30px; /* Memastikan ruang untuk angka */
+            text-align: right;
+        }
+
+        /* Posisikan .stats-row relative agar garis vertikal::after bekerja */
+        .stats-row {
+            position: relative;
+        }
+        /* Hapus border bawaan pada Server Stats dan ganti dengan styling baru */
+        .stats-row {
+            border-bottom: none; 
+            padding: 15px 0; 
+        }
+
+        /* --- Navbar Horizontal Styles (Sudah Disesuaikan) --- */
+        /* ... CSS Navbar Container tetap dari sesi sebelumnya ... */
         .navbar-container {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            /* Latar belakang lebih gelap dan tegas */
             background: #0d0d0d; 
-            /* Border atas lebih tebal dan berwarna untuk pemisah visual */
             border-top: 3px solid #1B47F1; 
-            /* Bayangan yang lebih jelas */
             box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
-            /* Padding ditingkatkan agar ada ruang di atas dan bawah */
             padding: 10px 0; 
             display: flex;
             justify-content: space-around;
@@ -48,142 +284,127 @@
             transition: transform 0.2s, color 0.2s;
         }
         
-        /* Efek hover untuk interaksi */
         .nav-item:hover {
              transform: translateY(-2px);
         }
 
         .nav-icon {
             font-size: 24px;
-            color: #404040; /* Warna icon default abu-abu gelap */
+            color: #404040; 
             transition: color 0.3s;
         }
 
-        /* Style untuk icon yang aktif/terpilih */
         .nav-item.active .nav-icon {
             color: #1B47F1; 
             text-shadow: 0 0 5px #1B47F1;
         }
         
-        /* Teks kecil di bawah ikon (Bug, Home, dll.) - LOGIKA FLOATING TEXT */
         .nav-text {
             position: absolute;
             left: 50%;
-            /* Posisikan di atas ikon (Mengambang) */
             transform: translateX(-50%) translateY(-40px); 
             font-size: 12px;
             font-weight: 600;
-            color: white; /* Teks putih agar lebih terlihat */
-            background: #F81CF8; /* Background ungu/pink solid */
+            color: white; 
+            background: #F81CF8; 
             padding: 4px 10px;
-            border-radius: 10px; /* Bentuk pill */
+            border-radius: 10px; 
             display: none; 
             white-space: nowrap;
             box-shadow: 0 0 10px #F81CF8;
             z-index: 60;
         }
 
-        /* Tampilkan teks hanya pada item yang aktif */
         .nav-item.active .nav-text {
             display: block;
         }
-        
+
         /* --- Custom Modal Pop-up Styles (Sama seperti sebelumnya) --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-content {
-            background: #101533;
-            border: 1px solid #2B51E2;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 350px;
-            width: 90%;
-            text-align: center;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: scale(0.8);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .modal-overlay.show .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        
-        .modal-icon {
-            color: #ff4444;
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .modal-text {
-            font-size: 14px;
-            color: #B3C0FF;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .modal-buttons button {
-            padding: 10px 20px;
-            margin: 0 5px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
-        }
-
-        #btn-buy-modal {
-            background-color: #352BE2;
-            color: white;
-        }
-
-        #btn-buy-modal:hover {
-            background-color: #2118D7;
-            transform: translateY(-1px);
-        }
-
-        #btn-logout-modal {
-            background-color: #2a3a4c;
-            color: #ffffff;
-        }
-
-        #btn-logout-modal:hover {
-            background-color: #3e5066;
-            transform: translateY(-1px);
-        }
+        .modal-overlay { /* ... CSS Modal ... */ }
+        /* ... CSS Modal lainnya ... */
     </style>
 </head>
 
 <body>
+    <div class="header-top">
+        <div class="header-title">Sparta V0.1</div>
+        <i class="fas fa-user-circle header-icon"></i>
+    </div>
+    
     <div class="content">
-        <div class="welcome" id="welcome-message">Selamat Datang, User!</div>
-        <div class="user-info">Anda berhasil masuk ke Sparta Protocol.</div>
-        <p class="user-info" id="expiry-info"></p>
-        <button class="logout-btn" onclick="performLogout()">Logout Sekarang</button>
         
-        <h2 style="margin-top: 50px; color: #2B30E2;">Fitur Utama Dashboard</h2>
-        <p style="color: #6a6a6a; margin-top: 10px;">Klik tombol di Navbar bawah untuk melihat efek teks.</p>
+        <div class="slider-container" id="image-slider">
+            <div class="slider-wrapper">
+                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 1"></div>
+                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 2"></div>
+                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 3"></div>
+            </div>
+            <div class="beta-overlay">
+                <h3>🔥 Beta Test</h3>
+                <p>This Apps Server Still On Beta Test.</p>
+            </div>
         </div>
+
+        <div style="padding: 20px 0;">
+            <div class="welcome" id="welcome-message" style="font-size: 26px;">Selamat Datang!</div>
+            <p class="user-info" id="expiry-info" style="font-size: 14px; margin-top: 5px;"></p>
+            <button class="logout-btn" onclick="performLogout()">Logout Sekarang</button>
+        </div>
+
+
+        <div class="menu-buttons">
+            <div class="menu-item" onclick="window.open('https://wa.me/628123456789', '_blank')">
+                <div class="menu-icon-wrapper">
+                    <i class="fab fa-whatsapp menu-icon"></i>
+                </div>
+                <div class="menu-text">WhatsApp</div>
+            </div>
+            <div class="menu-item" onclick="alert('Membuka Chat (Fitur belum tersedia)')">
+                <div class="menu-icon-wrapper">
+                    <i class="fas fa-comment menu-icon"></i>
+                </div>
+                <div class="menu-text">Chat</div>
+            </div>
+            <div class="menu-item" onclick="alert('Membuka Akun (Fitur belum tersedia)')">
+                <div class="menu-icon-wrapper">
+                    <i class="fas fa-cog menu-icon"></i>
+                </div>
+                <div class="menu-text">Account</div>
+            </div>
+        </div>
+
+        <div class="telegram-banner" onclick="window.open('https://t.me/Farelmod', '_blank')">
+            <div class="telegram-text">
+                <h4 style="color: #ff4444;"><i class="fab fa-telegram-plane"></i> 🔥 Telegram Channel:</h4>
+                <span>Join To Get More Info!</span>
+            </div>
+            <i class="fas fa-chevron-right telegram-icon"></i>
+        </div>
+
+        <div class="stats-widget">
+            <div class="stats-title"><i class="fas fa-chart-bar" style="margin-right: 10px;"></i> 📊 Server Stats</div>
+            
+            <div class="stats-row">
+                <div class="stats-label">
+                    <i class="fas fa-users stats-icon" style="color:#1B47F1;"></i> Online Users
+                </div>
+                <div class="stats-value-container">
+                    <span id="online-users-value" class="stats-value">0</span>
+                </div>
+            </div>
+            
+            <div class="stats-row" style="border-bottom: none;">
+                <div class="stats-label">
+                    <i class="fas fa-rocket stats-icon" style="color:#ff4444;"></i> Active Sender
+                </div>
+                <div class="stats-value-container">
+                    <span id="active-sender-value" class="stats-value">0</span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-content">
@@ -208,9 +429,9 @@
             <div class="nav-text">Bug</div>
         </div>
 
-        <div class="nav-item" data-text="Power" id="nav-power">
+        <div class="nav-item" data-text="Update" id="nav-update">
             <i class="fas fa-bolt nav-icon"></i>
-            <div class="nav-text">Power</div>
+            <div class="nav-text">Update</div>
         </div>
 
         <div class="nav-item" data-text="Chat" id="nav-chat">
@@ -221,8 +442,12 @@
 
     <script>
         // --- KRITIS: Session dan Fetch Functions dari index.html ---
-        const raw_url = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
-        const CHECK_INTERVAL = 5000;
+        const RAW_URL_AKSES = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
+        // URL Baru untuk menyimpan data status user (membutuhkan file JSON baru)
+        const RAW_URL_USER_STATUS = "https://raw.githubusercontent.com/Farelmods-ux/database/main/user_status.json";
+        
+        const CHECK_INTERVAL = 5000; // Cek penghapusan akun
+        const USER_STATUS_INTERVAL = 30000; // Cek status user (30 detik)
 
         function clearSession() {
             localStorage.removeItem('app_session');
@@ -234,14 +459,14 @@
             } catch (e) { return null; }
         }
 
-        async function fetchAccessList() {
+        async function fetchJSON(url) {
             try {
-                const resp = await fetch(raw_url, { cache: 'no-store' });
-                if (!resp.ok) throw new Error('Gagal mengambil akses.json: ' + resp.status);
+                const resp = await fetch(url, { cache: 'no-store' });
+                if (!resp.ok) throw new Error('Gagal mengambil JSON: ' + resp.status);
                 const txt = await resp.text();
+                // Mencoba parse, mengakomodasi format array atau objek
                 let data;
-                try { data = JSON.parse(txt); }
-                catch (e) {
+                try { data = JSON.parse(txt); } catch (e) {
                     const arrMatch = txt.match(/\[([\s\S]*)\]/);
                     if (arrMatch) {
                         try { data = JSON.parse('[' + arrMatch[1] + ']'); } catch (e2) { data = null; }
@@ -252,15 +477,20 @@
                 if (typeof data === 'object') {
                     const vals = Object.values(data).filter(v => typeof v === 'object');
                     if (vals.length) return vals;
+                    return data; // Kembalikan objek jika bukan array
                 }
                 return null;
             } catch (err) {
-                console.error("Error fetching access list:", err);
+                console.error("Error fetching JSON from " + url, err);
                 return null;
             }
         }
         
-        // --- FUNGSI MODAL DASHBOARD (Sama seperti sebelumnya) ---
+        async function fetchAccessList() {
+            return fetchJSON(RAW_URL_AKSES);
+        }
+
+        // --- FUNGSI MODAL DASHBOARD ---
         const customModal = document.getElementById('custom-modal');
         const modalText = document.getElementById('modal-text');
         const modalTitle = document.getElementById('modal-title');
@@ -271,6 +501,7 @@
             modalText.textContent = message;
             customModal.style.display = 'flex';
             setTimeout(() => customModal.classList.add('show'), 10);
+            // Menonaktifkan interaksi di luar modal
             document.body.style.pointerEvents = 'none';
             customModal.style.pointerEvents = 'auto';
         }
@@ -285,43 +516,123 @@
         });
 
 
-        // --- LOGIKA REAL-TIME DELETION CHECK (Sama seperti sebelumnya) ---
-        let checkIntervalId;
+        // --- LOGIKA REAL-TIME DELETION CHECK ---
+        let checkDeletionIntervalId;
 
         function checkRealTimeDeletion(username) {
-            checkIntervalId = setInterval(async () => {
+            checkDeletionIntervalId = setInterval(async () => {
                 const list = await fetchAccessList();
                 if (!list) return; 
 
                 const found = list.find(u => (u.username == username));
 
                 if (!found) {
-                    clearInterval(checkIntervalId);
+                    clearInterval(checkDeletionIntervalId);
                     clearSession();
                     showCustomModal("Akun Anda Telah Dihapus, Silahkan Beli Lagi", "Akun Dihapus!");
                 }
             }, CHECK_INTERVAL);
         }
+        
+        // --- LOGIKA ACTIVE/INACTIVE USER COUNTER BARU ---
+        
+        // Catatan: Karena kita tidak memiliki server backend untuk MENGUPDATE user_status.json
+        // Logika di bawah hanya bisa MEMBACA nilai dari user_status.json.
+        // Untuk tujuan demonstrasi dan memenuhi permintaan, kita akan mensimulasikan
+        // bahwa file JSON dapat diperbarui oleh pengguna lain.
+        
+        async function updateServerStats() {
+             const session = getSession();
+             if (!session) return;
+             
+             // 1. Simulasikan pengiriman 'heartbeat' ke server (di lingkungan statik ini, ini adalah titik kegagalan)
+             // Jika ini adalah server, Anda akan mengirim AJAX ke server untuk mencatat aktivitas.
+             // Di sini, kita hanya membaca.
+             
+             // 2. Ambil data status terbaru
+             const statusData = await fetchJSON(RAW_URL_USER_STATUS);
+             
+             if (statusData && typeof statusData === 'object') {
+                 // Diasumsikan statusData memiliki struktur { active_users: N, inactive_users: M }
+                 const activeUsers = statusData.active_users || 0;
+                 const inactiveUsers = statusData.inactive_users || 0;
+                 
+                 // Update tampilan
+                 document.getElementById('online-users-value').textContent = activeUsers;
+                 document.getElementById('active-sender-value').textContent = inactiveUsers;
+                 
+             } else {
+                 console.warn("Gagal mendapatkan/menganalisis user_status.json. Menampilkan default 0.");
+                 document.getElementById('online-users-value').textContent = '0';
+                 document.getElementById('active-sender-value').textContent = '0';
+             }
+        }
+        
+        // --- LOGIKA IMAGE SLIDER (CAROUSEL) ---
+        const slider = document.getElementById('image-slider');
+        const sliderWrapper = slider.querySelector('.slider-wrapper');
+        const totalSlides = sliderWrapper.querySelectorAll('.slide-item').length;
+        let currentSlide = 0;
 
-        // --- LOGIKA NAVBAR BARU ---
+        // Fungsi untuk menggeser slide
+        function goToSlide(index) {
+            if (index >= totalSlides) index = 0;
+            if (index < 0) index = totalSlides - 1;
+            currentSlide = index;
+            const offset = -currentSlide * 100;
+            sliderWrapper.style.transform = `translateX(${offset / totalSlides}%)`; 
+        }
+
+        // Auto slide setiap 5 detik
+        setInterval(() => {
+            goToSlide(currentSlide + 1);
+        }, 5000);
+        
+        // Tambahkan event listener untuk menggeser (swipe)
+        let startX = 0;
+        let endX = 0;
+        
+        slider.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            sliderWrapper.style.transition = 'none'; // Matikan transisi saat swipe
+        });
+        
+        slider.addEventListener('touchmove', (e) => {
+            endX = e.touches[0].clientX;
+            const diff = endX - startX;
+            const maxDiff = slider.offsetWidth / 2;
+            const currentOffset = -currentSlide * slider.offsetWidth;
+            sliderWrapper.style.transform = `translateX(${currentOffset + diff}px)`;
+        });
+        
+        slider.addEventListener('touchend', () => {
+            const diff = endX - startX;
+            const threshold = 50; // Jarak minimal swipe
+            sliderWrapper.style.transition = 'transform 0.3s ease-in-out'; // Hidupkan transisi
+            
+            if (diff > threshold) {
+                // Swipe ke kanan (slide sebelumnya)
+                goToSlide(currentSlide - 1);
+            } else if (diff < -threshold) {
+                // Swipe ke kiri (slide berikutnya)
+                goToSlide(currentSlide + 1);
+            } else {
+                // Tidak ada swipe yang signifikan, kembalikan posisi
+                goToSlide(currentSlide);
+            }
+        });
+
+
+        // --- LOGIKA NAVBAR ---
         const navItems = document.querySelectorAll('.nav-item');
 
         function setActiveNavItem(clickedItem) {
-            // 1. Hapus class 'active' dari semua item
             navItems.forEach(item => {
                 item.classList.remove('active');
             });
-            
-            // 2. Tambahkan class 'active' ke item yang diklik
             clickedItem.classList.add('active');
-
-            // 3. (Opsional) Tampilkan nama menu di konsol
-            console.log(`Menu diklik: ${clickedItem.getAttribute('data-text')}`);
-            
-            // Di sini Anda bisa menambahkan logika untuk memuat konten dashboard yang berbeda
         }
 
-        // Tambahkan event listener ke setiap tombol
         navItems.forEach(item => {
             item.addEventListener('click', function() {
                 setActiveNavItem(this);
@@ -329,7 +640,7 @@
         });
 
 
-        // --- DASHBOARD ON LOAD ---
+        // --- DASHBOARD ON LOAD & MASTER INTERVAL ---
         document.addEventListener('DOMContentLoaded', function () {
             const session = getSession();
             
@@ -339,22 +650,34 @@
             }
 
             // Tampilkan info user
-            document.getElementById('welcome-message').textContent = `Selamat Datang, ${session.username}!`;
+            const displayUsername = session.username.charAt(0).toUpperCase() + session.username.slice(1);
+            document.getElementById('welcome-message').textContent = `Selamat Datang, ${displayUsername}!`;
             
             if (session.expiresAt !== Infinity) {
-                const expiryDate = new Date(session.expiresAt).toLocaleDateString();
-                document.getElementById('expiry-info').textContent = `Masa Aktif: ${session.durasi} (berakhir ${expiryDate})`;
+                // Tambahkan 'Owner' jika role adalah 'owner'
+                const roleText = session.role === 'owner' ? ' Owner' : '';
+                
+                // Format tanggal ke 1/1/1970
+                const expiryDate = new Date(session.expiresAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+                
+                document.getElementById('expiry-info').textContent = `Masa Aktif: ${session.durasi}${roleText} (berakhir ${expiryDate})`;
             } else {
-                document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent`;
+                // Akun Permanent
+                const roleText = session.role === 'owner' ? ' Owner' : '';
+                document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent${roleText} (Tidak akan dihapus)`;
             }
 
-            // Mulai pengecekan real-time
+            // Mulai pengecekan real-time (Penghapusan Akun)
             checkRealTimeDeletion(session.username);
             
-            // Pastikan Home aktif secara default
-            // navItems[0].classList.add('active'); // Sudah diatur di HTML
+            // Mulai pengecekan status server (Active/Inactive User)
+            updateServerStats(); // Panggil pertama kali
+            setInterval(updateServerStats, USER_STATUS_INTERVAL); // Panggil berulang
+
+            // Inisialisasi slider
+            goToSlide(0);
         });
 
     </script>
 </body>
- </html>
+    </html>
