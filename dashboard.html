@@ -257,8 +257,8 @@
             padding: 15px 0; 
         }
 
-        /* --- Navbar Horizontal Styles (Sudah Disesuaikan) --- */
-        /* ... CSS Navbar Container tetap dari sesi sebelumnya ... */
+/* --- Navbar Horizontal Styles (Perubahan di sini) --- */
+        
         .navbar-container {
             position: fixed;
             bottom: 0;
@@ -299,29 +299,55 @@
             text-shadow: 0 0 5px #1B47F1;
         }
         
+        /* PERUBAHAN KRITIS DI SINI */
         .nav-text {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%) translateY(-40px); 
-            font-size: 12px;
-            font-weight: 600;
-            color: white; 
-            background: #F81CF8; 
-            padding: 4px 10px;
-            border-radius: 10px; 
-            display: none; 
+            /* Hapus absolute position dan transform yang memindahkannya ke atas */
+            position: static; 
+            transform: none;
+            
+            /* Teks sekarang berada di bawah ikon secara alami */
+            font-size: 14px; /* Ukuran teks sedang (Medium) */
+            font-weight: 500;
+            color: #B3C0FF; /* Warna teks biasa */
+            
+            /* Hapus background dan shadow yang tidak diinginkan */
+            background: none; 
+            padding: 0; /* Hapus padding */
+            border-radius: 0; 
+            display: block; /* Pastikan teks ada di baris baru */
             white-space: nowrap;
-            box-shadow: 0 0 10px #F81CF8;
+            box-shadow: none;
             z-index: 60;
         }
-
-        .nav-item.active .nav-text {
+        
+        /* Teks harus selalu terlihat, Hapus logika 'active' untuk menampilkan teks */
+        /* .nav-item.active .nav-text {
             display: block;
+        } */
+
+
+        /* Tambahan: Sesuaikan padding nav-item agar ikon dan teks lebih rapat */
+        .nav-item {
+            padding: 0; /* Hapus padding 5px 0 agar lebih rapat */
+        }
+        
+        /* Tambahan: Jarak vertikal yang lebih baik di navbar container */
+        .navbar-container {
+            padding: 5px 0;
+            flex-direction: column; /* Pastikan item navbar berada di baris baru */
+            justify-content: center;
+            align-items: center;
         }
 
-        /* --- Custom Modal Pop-up Styles (Sama seperti sebelumnya) --- */
-        .modal-overlay { /* ... CSS Modal ... */ }
-        /* ... CSS Modal lainnya ... */
+        /* PERBAIKI STRUKTUR NAV ITEM AGAR ICON DAN TEKS BERADA DI ATAS-BAWAH */
+        .nav-item {
+            display: flex;
+            flex-direction: column; /* Icon di atas, Teks di bawah */
+            justify-content: center;
+            align-items: center;
+            padding: 5px 0; /* Tambahkan kembali padding vertikal untuk item */
+        }
+        /* ... kode CSS setelah navbar ... */
     </style>
 </head>
 
@@ -335,22 +361,15 @@
         
         <div class="slider-container" id="image-slider">
             <div class="slider-wrapper">
-                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 1"></div>
-                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 2"></div>
-                <div class="slide-item"><img src="https://images.unsplash.com/photo-1547476566-b3334273030d" alt="Server 3"></div>
+                <div class="slide-item"><img src="https://iili.io/KOHKQsV.jpg" alt="Server 1"></div>
+                <div class="slide-item"><img src="https://iili.io/KOHBbgS.jpg" alt="Server 2"></div>
+                <div class="slide-item"><img src="https://iili.io/KOHC0pn.jpg" alt="Server 3"></div>
             </div>
             <div class="beta-overlay">
                 <h3>🔥 Beta Test</h3>
-                <p>This Apps Server Still On Beta Test.</p>
+                <p>This  Apps  Server  Still  On  Beta  Test.</p>
             </div>
         </div>
-
-        <div style="padding: 20px 0;">
-            <div class="welcome" id="welcome-message" style="font-size: 26px;">Selamat Datang!</div>
-            <p class="user-info" id="expiry-info" style="font-size: 14px; margin-top: 5px;"></p>
-            <button class="logout-btn" onclick="performLogout()">Logout Sekarang</button>
-        </div>
-
 
         <div class="menu-buttons">
             <div class="menu-item" onclick="window.open('https://wa.me/628123456789', '_blank')">
@@ -375,14 +394,14 @@
 
         <div class="telegram-banner" onclick="window.open('https://t.me/Farelmod', '_blank')">
             <div class="telegram-text">
-                <h4 style="color: #ff4444;"><i class="fab fa-telegram-plane"></i> 🔥 Telegram Channel:</h4>
+                <h4 style="color: #ff4444;"><i class="fab fa-telegram-plane"></i> Telegram Channel:</h4>
                 <span>Join To Get More Info!</span>
             </div>
             <i class="fas fa-chevron-right telegram-icon"></i>
         </div>
 
         <div class="stats-widget">
-            <div class="stats-title"><i class="fas fa-chart-bar" style="margin-right: 10px;"></i> 📊 Server Stats</div>
+            <div class="stats-title"><i class="fas fa-chart-bar" style="margin-right: 10px;"></i> Server Stats</div>
             
             <div class="stats-row">
                 <div class="stats-label">
@@ -418,28 +437,28 @@
         </div>
     </div>
     
-    <div class="navbar-container">
-        <div class="nav-item active" data-text="Home" id="nav-home">
+<div class="navbar-container">
+        <div class="nav-item active" id="nav-home">
             <i class="fas fa-home nav-icon"></i>
             <div class="nav-text">Home</div>
         </div>
         
-        <div class="nav-item" data-text="Bug" id="nav-bug">
+        <div class="nav-item" id="nav-bug">
             <i class="fas fa-phone-alt nav-icon"></i>
             <div class="nav-text">Bug</div>
         </div>
 
-        <div class="nav-item" data-text="Update" id="nav-update">
+        <div class="nav-item" id="nav-update">
             <i class="fas fa-bolt nav-icon"></i>
             <div class="nav-text">Update</div>
         </div>
 
-        <div class="nav-item" data-text="Chat" id="nav-chat">
+        <div class="nav-item" id="nav-chat">
             <i class="fas fa-comment nav-icon"></i>
             <div class="nav-text">Chat</div>
         </div>
     </div>
-
+    
     <script>
         // --- KRITIS: Session dan Fetch Functions dari index.html ---
         const RAW_URL_AKSES = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
@@ -649,6 +668,8 @@
                 return;
             }
 
+            // Bagian ini di HAPUS/NONAKTIFKAN sesuai permintaan
+            /*
             // Tampilkan info user
             const displayUsername = session.username.charAt(0).toUpperCase() + session.username.slice(1);
             document.getElementById('welcome-message').textContent = `Selamat Datang, ${displayUsername}!`;
@@ -666,6 +687,7 @@
                 const roleText = session.role === 'owner' ? ' Owner' : '';
                 document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent${roleText} (Tidak akan dihapus)`;
             }
+            */
 
             // Mulai pengecekan real-time (Penghapusan Akun)
             checkRealTimeDeletion(session.username);
@@ -680,4 +702,4 @@
 
     </script>
 </body>
-    </html>
+        </html>
