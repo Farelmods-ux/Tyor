@@ -67,13 +67,14 @@
             flex-shrink: 0;
             position: relative;
         }
-
+        
         .slide-item img {
-            width: 100%;
-            height: 100%; /* PENTING: Gunakan 100% tinggi kontainer */
-            object-fit: cover;
-            display: block;
+           width: 100%;
+           height: 100%; 
+           object-fit: contain; /* Sudah benar, gambar tidak akan terpotong */
+           display: block;
         }
+
         
         /* Overlay untuk Beta Test Text */
         .beta-overlay {
@@ -263,7 +264,7 @@
             padding: 15px 0; 
         }
 
-       /* --- Navbar Horizontal Styles (PERUBAHAN DI SINI) --- */
+/* --- Navbar Horizontal Styles (SUDAH BENAR) --- */
         .navbar-container {
             position: fixed;
             bottom: 0;
@@ -272,15 +273,14 @@
             background: #0d0d0d; 
             border-top: 3px solid #1B47F1; 
             box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
-            padding: 5px 0; /* Padding vertikal disesuaikan */
+            padding: 5px 0;
             display: flex;
-            /* Ubah ini: Kita hanya perlu justify-content space-around */
-            justify-content: space-around;
+            /* PENTING: Gunakan justify-content space-around untuk menyusun item secara horizontal */
+            justify-content: space-around; 
             align-items: center;
             z-index: 50;
             backdrop-filter: blur(5px);
-            /* Hapus flex-direction: column yang salah dari perbaikan sebelumnya */
-            /* flex-direction: column; */ 
+            /* Hapus flex-direction: column; jika ada di sini */
         }
 
         .nav-item {
