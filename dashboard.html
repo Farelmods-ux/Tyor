@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sparta V0.1 - Dashboard</title>
-    <!-- Firebase SDKs (Menggunakan versi 8.6.8 yang kompatibel dengan <script> tag) -->
+    <!-- Firebase SDKs (Diperlukan untuk Realtime Database) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     
@@ -16,8 +16,28 @@
 <style>
     /* CSS umum */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: black; font-family: 'Poppins', sans-serif; color: white; min-height: 100vh; position: relative; }
-    .content { padding: 0 20px 100px 20px; /* Padding atas dikurangi */ }
+    
+    /* PERUBAHAN KRITIS: Body Full Screen dan Hapus Scroll */
+    body { 
+        background: black; 
+        font-family: 'Poppins', sans-serif; 
+        color: white; 
+        height: 100vh; /* Tinggi penuh viewport */
+        width: 100vw; /* Lebar penuh viewport */
+        position: relative; 
+        display: flex; /* Menggunakan flexbox untuk tata letak utama */
+        flex-direction: column; /* Konten disusun vertikal */
+        overflow: hidden; /* HAPUS SCROLL UTAMA */
+    }
+    
+    /* Perubahan untuk membuat konten bisa di-scroll secara internal */
+    .content-container {
+        flex-grow: 1; /* Kontainer mengambil sisa tinggi yang tersedia */
+        overflow-y: auto; /* Memungkinkan scrolling internal jika konten melebihi tinggi */
+        padding: 0 20px 10px 20px; /* Padding bawah 10px, Navbar sudah 70px */
+        width: 100%;
+        -webkit-overflow-scrolling: touch; /* Sentuhan scroll yang lebih halus di iOS */
+    }
 
     /* --- Custom Header Styles --- */
     .header-top {
@@ -26,9 +46,9 @@
         align-items: center;
         padding: 15px 20px;
         background: black;
-        position: sticky;
-        top: 0;
+        /* Hapus position: sticky karena body sudah flex dan fixed */
         z-index: 100;
+        flex-shrink: 0; /* Pastikan header tidak menyusut */
     }
 
     .header-title {
@@ -54,6 +74,7 @@
         height: 0; 
         padding-bottom: 56.25%; /* Rasio 16:9 */
         background: black; 
+        flex-shrink: 0; /* Penting agar slider tidak terdistorsi saat scrolling */
     }
 
     .slider-wrapper {
@@ -95,8 +116,9 @@
     .beta-overlay h3 {
         font-size: 20px;
         font-weight: 800;
-        color: #ff4444; 
-        text-shadow: 0 0 5px #ff4444;
+        /* Warna website (biru) */
+        color: #1B47F1; 
+        text-shadow: 0 0 5px #0917D7;
     }
     
     .beta-overlay p {
@@ -110,6 +132,7 @@
         justify-content: space-around;
         margin: 30px 0;
         padding: 0 10px;
+        flex-shrink: 0;
     }
     
     .menu-item {
@@ -164,6 +187,7 @@
         align-items: center;
         cursor: pointer;
         box-shadow: 0 5px 20px rgba(185, 0, 255, 0.5);
+        flex-shrink: 0;
     }
     
     .telegram-text {
@@ -193,6 +217,7 @@
         margin-top: 30px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
         color: white;
+        flex-shrink: 0;
     }
 
     .stats-title {
@@ -255,9 +280,7 @@
     
     /* --- Navbar Horizontal Styles --- */
     .navbar-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
+        /* Hapus position: fixed, gunakan flexbox */
         width: 100%;
         background: #0d0d0d; 
         border-top: 3px solid #1B47F1; 
@@ -268,6 +291,7 @@
         align-items: center;
         z-index: 50;
         backdrop-filter: blur(5px);
+        flex-shrink: 0; /* Pastikan navbar tidak menyusut */
     }
 
     .nav-item {
@@ -389,12 +413,15 @@
         </div>
     </div>
 
+    <!-- Header (Fixed di atas) -->    
     <div class="header-top">
         <div class="header-title">Sparta V0.1</div>
         <i class="fas fa-user-circle header-icon"></i>
-    </div>
+        </div>
+    </div>        
 
-    <div class="content">
+    <!-- Kontainer Konten (Bisa di-scroll secara internal) -->
+    <div class="content-container">
         <!-- Selamat Datang Section -->
         <div style="margin-bottom: 30px;">
             <p id="welcome-message" class="welcome" style="font-size: 20px; font-weight: 600;"></p>
@@ -408,7 +435,7 @@
                     <img src="https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1" onerror="this.src='https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1'" alt="Slider Image 1">
                     <div class="beta-overlay">
                         <h3>🔥 Beta Test</h3>
-                        <p>This  Apps  Server  Still  On  Beta  Test.</p>                   
+                        <p>This  Apps  Server  Still  On  Beta  Test.</p>
                     </div>
                 </div>
                 <div class="slide-item">
@@ -419,22 +446,22 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Menu Buttons -->
         <div class="menu-buttons">
-                    <div class="menu-item" onclick="window.open('https://wa.me/628123456789', '_blank')">
+            <div class="menu-item" onclick="window.open('https://wa.me/6282164306393', '_blank')">
                 <div class="menu-icon-wrapper">
                     <i class="fab fa-whatsapp menu-icon"></i>
                 </div>
                 <div class="menu-text">WhatsApp</div>
             </div>
-            <div class="menu-item" onclick="alert('Membuka Chat (Fitur belum tersedia)')">
+            <div class="menu-item" onclick="showCustomModal('Fitur belum tersedia.', 'Informasi')">        
                 <div class="menu-icon-wrapper">
                     <i class="fas fa-comment menu-icon"></i>
                 </div>
                 <div class="menu-text">Chat</div>
             </div>
-            <div class="menu-item" onclick="alert('Membuka Akun (Fitur belum tersedia)')">
+            <div class="menu-item" onclick="showCustomModal('Fitur belum tersedia.', 'Informasi')">   
                 <div class="menu-icon-wrapper">
                     <i class="fas fa-cog menu-icon"></i>
                 </div>
@@ -454,11 +481,11 @@
         <!-- Server Stats Widget (Penghitung Real-time) -->
         <div class="stats-widget">
             <div class="stats-title">
-                <i class="fas fa-chart-bar" style="margin-right: 10px;"></i> Server Stats</div>            
+                <i class="fa-solid fa-server" style="margin-right: 8px;"></i> Status Server
             </div>
             <div class="stats-row">
                 <div class="stats-label">
-                    <i class="fas fa-users stats-icon" style="color:#1B47F1;"></i> Online Users
+                    <i class="fa-solid fa-user-check stats-icon"></i> Online Users
                 </div>
                 <div class="stats-value-container">
                     <!-- ID ini akan diupdate secara real-time oleh Firebase -->
@@ -467,36 +494,37 @@
             </div>
             <div class="stats-row">
                 <div class="stats-label">
-                    <i class="fas fa-rocket stats-icon" style="color:#ff4444;"></i> Active Sender
+                    <i class="fa-solid fa-message stats-icon"></i> Active Sender
                 </div>
                 <div class="stats-value-container">
-                    <!-- ID ini juga akan diupdate (Simulasi) -->
+                    <!-- ID ini juga akan diupdate (Simulasi berdasarkan Online Users) -->
                     <span id="active-sender-value" class="stats-value">0</span>
                 </div>
             </div>
         </div>
+
+        <!-- Dummy Content untuk memastikan scrolling internal berfungsi -->
+        <div style="height: 50px;"></div> 
     </div>
-
-    <!-- Navbar Bawah -->
+            
+    <!-- Navbar Bawah (Fixed di bawah) -->
     <div class="navbar-container">
-            <div class="nav-item active" id="nav-home">
+        <div class="nav-item active" data-text="Home">
             <i class="fas fa-home nav-icon"></i>
-            <div class="nav-text">Home</div>
+            <span class="nav-text">Home</span>
         </div>
-        
-        <div class="nav-item" id="nav-bug">
+        <!-- Item 2: Bug -->
+        <div class="nav-item" onclick="window.location.href='bug.html'" data-text="Bug">
             <i class="fas fa-phone-alt nav-icon"></i>
-            <div class="nav-text">Bug</div>
-        </div>
-
-        <div class="nav-item" id="nav-update">
+            <span class="nav-text">Bug</span>
+        </div>        
+        <div class="nav-item" data-text="Tools">
             <i class="fas fa-bolt nav-icon"></i>
-            <div class="nav-text">Update</div>
+            <span class="nav-text">Tools</span>
         </div>
-
-        <div class="nav-item" id="nav-chat">
+        <div class="nav-item" data-text="Chat"
             <i class="fas fa-comment nav-icon"></i>
-            <div class="nav-text">Chat</div>
+            <span class="nav-text">Chat</span>
         </div>
     </div>
 
@@ -517,16 +545,15 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
-        const onlineRef = db.ref('onlineUsers'); // Node khusus di Realtime Database
+        const onlineRef = db.ref('onlineUsers'); // Node khusus untuk menyimpan status online
         
         // Konstanta Heartbeat
         const HEARTBEAT_INTERVAL = 15000; // Kirim heartbeat setiap 15 detik
         const USER_TIMEOUT = 30000; // User dianggap offline jika tidak ada heartbeat selama 30 detik
         const CHECK_INTERVAL = 10000; // Interval cek hapus akun
 
-        // --- KRITIS: Session dan Fetch Functions dari index.html ---
-        // URL sumber data akses (Sama seperti di index.html)
-        const RAW_URL_AKSES = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
+        // --- KRITIS: Session dan Fetch Functions dari index.html (Kode penting yang tidak diubah) ---
+        const raw_aksesURL = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
         
         function clearSession() {
             localStorage.removeItem('app_session');
@@ -538,7 +565,6 @@
             } catch (e) { return null; }
         }
         
-        // Fungsi fetch JSON dari index.html
         async function fetchJSON(url) {
             try {
                 const resp = await fetch(url, { cache: 'no-store' });
@@ -566,10 +592,10 @@
         }
         
         async function fetchAccessList() {
-            return fetchJSON(RAW_URL_AKSES);
+            return fetchJSON(raw_aksesURL);
         }
 
-        // --- FUNGSI MODAL DASHBOARD ---
+        // --- FUNGSI MODAL DASHBOARD (Kode penting yang tidak diubah) ---
         const customModal = document.getElementById('custom-modal');
         const modalText = document.getElementById('modal-text');
         const modalTitle = document.getElementById('modal-title');
@@ -579,17 +605,15 @@
             modalTitle.textContent = title;
             modalText.textContent = message;
             customModal.style.display = 'flex';
-            // Paksa reflow untuk transisi opacity
             setTimeout(() => customModal.classList.add('show'), 10);
             
-            // Nonaktifkan interaksi di body kecuali modal
             document.body.style.pointerEvents = 'none';
             customModal.style.pointerEvents = 'auto';
         }
 
         function performLogout() {
             const session = getSession();
-            // Hapus user dari online list saat logout (penting!)
+            // PERUBAHAN KRITIS: Hapus user dari online list saat logout manual
             if (session && session.username) {
                  onlineRef.child(session.username).remove();
             }
@@ -602,7 +626,7 @@
         });
 
 
-        // --- LOGIKA REAL-TIME DELETION CHECK ---
+        // --- LOGIKA REAL-TIME DELETION CHECK (Kode penting yang tidak diubah) ---
         let checkDeletionIntervalId;
 
         function checkRealTimeDeletion(username) {
@@ -610,7 +634,6 @@
                 const list = await fetchAccessList();
                 if (!list) return; 
 
-                // Cek apakah username masih ada di list akses
                 const found = list.find(u => (u.username == username));
 
                 if (!found) {
@@ -623,7 +646,7 @@
             }, CHECK_INTERVAL);
         }
         
-        // --- LOGIKA HEARTBEAT OTOMATIS (FIREBASE) ---
+        // --- LOGIKA HEARTBEAT OTOMATIS (BARU untuk Online Users) ---
         
         function startHeartbeat(username) {
             const userRef = onlineRef.child(username);
@@ -639,7 +662,7 @@
             }, HEARTBEAT_INTERVAL); 
         }
 
-        // --- LOGIKA UPDATE STATS (Mendengarkan Realtime Database) ---
+        // --- LOGIKA UPDATE STATS REAL-TIME (BARU untuk Online Users) ---
 
         function setupOnlineUserListener() {
             const onlineUsersValue = document.getElementById('online-users-value');
@@ -667,6 +690,7 @@
                     }
                     
                     // Simulasikan Active Sender: 80% dari Online Users + random kecil
+                    // Ini adalah simulasi sederhana. Logika sebenarnya mungkin berbeda.
                     activeSender = Math.max(0, Math.floor(onlineCount * 0.8) + Math.floor(Math.random() * 3));
                 }
                 
@@ -676,7 +700,7 @@
             });
         }
 
-        // --- LOGIKA IMAGE SLIDER & NAVBAR (Tidak Berubah) ---
+        // --- LOGIKA IMAGE SLIDER & NAVBAR (Kode penting yang tidak diubah) ---
         const slider = document.getElementById('image-slider');
         const sliderWrapper = slider.querySelector('.slider-wrapper');
         const totalSlides = sliderWrapper.querySelectorAll('.slide-item').length;
@@ -723,8 +747,6 @@
             }
         });
 
-
-        // LOGIKA NAVBAR
         const navItems = document.querySelectorAll('.nav-item');
 
         function setActiveNavItem(clickedItem) {
@@ -733,14 +755,12 @@
             });
             clickedItem.classList.add('active');
             
- /*           // Logika khusus untuk tombol Logout (memunculkan modal)
             if (clickedItem.getAttribute('data-text') === 'Logout') {
                  showCustomModal('Apakah Anda yakin ingin logout?', 'Konfirmasi Logout');
             } else {
-                // Di sini Anda bisa menambahkan logika untuk memuat konten dashboard yang berbeda
                 console.log(`Menu diklik: ${clickedItem.getAttribute('data-text')}`);
             }
-        }*/
+        }
 
         navItems.forEach(item => {
             item.addEventListener('click', function() {
@@ -758,7 +778,7 @@
                 return;
             }
 
-            // Tampilkan info user
+            // Tampilkan info user (Kode penting yang tidak diubah)
             const displayUsername = session.username.charAt(0).toUpperCase() + session.username.slice(1);
             document.getElementById('welcome-message').textContent = `Selamat Datang, ${displayUsername}!`;
             
@@ -774,7 +794,7 @@
             // Mulai pengecekan real-time (Penghapusan Akun)
             checkRealTimeDeletion(session.username);
             
-            // Mulai logika Heartbeat dan Listener Online User (OTOMATIS)
+            // PERUBAHAN KRITIS: Gantikan logika status server lama dengan Firebase Heartbeat
             setupOnlineUserListener();
             startHeartbeat(session.username); 
 
