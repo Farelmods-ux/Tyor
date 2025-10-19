@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDVSP V4 - Service Activation Tool</title>
+    <!-- Firebase SDKs (Diperlukan untuk kompatibilitas sesi) -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    
+    <!-- Google Font & Icon -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==?" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+<style>
+    /* CSS umum */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+        background: black; 
+        font-family: 'Poppins', sans-serif; 
+        color: white; 
+        min-height: 100vh; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative; 
+        /* Pastikan ada ruang di bawah untuk Navbar */
+        padding-bottom: 70px; 
+    }
+    
+    /* Konten utama harus fleksibel dan berada di atas navbar */
+    .content { 
+        padding: 20px; 
+        width: 100%;
+        max-width: 500px;
+        flex-grow: 1; 
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    
+    /* --- Custom Header Styles (Top Bar) --- */
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        width: 100%;
+        background: black;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1B47F1;
+        text-shadow: 0 0 5px #0917D7;
+    }
+
+    .menu-buttons {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .menu-buttons i {
+        font-size: 20px;
+        color: #B3C0FF;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    /* --- Main Card --- */
+    .main-card {
+        background: linear-gradient(180deg, #1c1c1c 0%, #101010 100%);
+        padding: 30px 20px;
+        margin-top: 20px;
+        border-radius: 15px;
+        width: 100%;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+        border: 1px solid #333;
+        text-align: center;
+        position: relative;
+    }
+
+    .logo-container { margin-bottom: 25px; }
+    /* Icon Service di Card menggunakan ikon Tools/Cogs */
+    .logo-container i { font-size: 50px; color: #1B47F1; text-shadow: 0 0 10px #0917D7; }
+    .user-info-display { background-color: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #444; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); }
+    .username-text { font-size: 18px; font-weight: 800; color: white; margin-bottom: 10px; }
+    .role-exp-text { font-size: 13px; color: #B3C0FF; font-weight: 500; }
+    .target-section { margin-bottom: 25px; }
+    .target-section h4 { color: white; font-weight: 600; margin-bottom: 15px; font-size: 16px; text-align: left; }
+    .input-group { display: flex; align-items: center; background-color: #0d0d0d; border: 1px solid #333; border-radius: 8px; padding: 5px 15px; }
+    .input-group span { color: #B3C0FF; font-size: 16px; font-weight: 600; margin-right: 10px; }
+    .target-input { flex-grow: 1; background: none; border: none; color: white; font-size: 16px; padding: 8px 0; outline: none; font-family: 'Poppins', sans-serif; }
+    .action-button { width: 100%; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s; margin-bottom: 15px; border: none; display: flex; align-items: center; justify-content: center; }
+    .select-service-btn { background-color: #333; color: white; border: 1px solid #555; }
+    .select-service-btn:hover { background-color: #444; }
+    .send-service-btn { background: linear-gradient(90deg, #1B47F1 0%, #0917D7 100%); color: white; box-shadow: 0 4px 15px rgba(27, 71, 241, 0.4); }
+    .send-service-btn:hover { background: linear-gradient(90deg, #2D65FF 0%, #1A34FF 100%); transform: translateY(-1px); }
+    .send-service-btn i { margin-right: 10px; font-size: 18px; }
+
+    /* Dropdown / Modal untuk Select Bug */
+    #service-selection-list {
+        display: none;
+        position: absolute;
+        width: calc(100% - 40px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1c1c1c;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+        z-index: 500;
+        overflow: hidden;
+        margin-top: -15px;
+    }
+
+    .service-option { padding: 12px 20px; cursor: pointer; color: #ccc; border-bottom: 1px solid #333; text-align: left; transition: background-color 0.2s; }
+    .service-option:last-child { border-bottom: none; }
+    .service-option:hover { background-color: #0917D7; color: white; }
+
+    /* Notifikasi & Modal Kustom */
+    #custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: #1c1c1c; padding: 25px; border-radius: 15px; width: 90%; max-width: 350px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); text-align: center; animation: fadeIn 0.3s; }
+    .modal-content button { background-color: #1B47F1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    
+    /* --- Bottom Navigation Bar (Navbar Full) --- */
+    .navbar-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        background: #1c1c1c;
+        border-top: 1px solid #333;
+        z-index: 200;
+        padding-bottom: env(safe-area-inset-bottom, 0); 
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #777; /* Warna default tidak aktif */
+        text-decoration: none;
+        font-size: 10px; /* Ukuran teks lebih kecil karena 4 item */
+        font-weight: 600;
+        cursor: pointer;
+        transition: color 0.2s;
+        padding: 5px;
+        width: 25%; /* Memastikan pembagian rata 4 item */
+    }
+
+    .nav-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    /* Status Aktif */
+    .nav-item.active {
+        color: #1B47F1; /* Warna aktif */
+    }
+
+    /* Area mobile (supaya navbar tetap di tengah) */
+    @media (min-width: 500px) {
+        .navbar-container {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+</style>
+</head>
+
+<body>
+    <!-- Custom Modal Structure -->
+    <div id="custom-modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="color: #1B47F1; margin-bottom: 15px;"></h3>
+            <p id="modal-message" style="color: #ccc; margin-bottom: 20px;"></p>
+            <button onclick="closeCustomModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- Header Top: Sparta + Icon Profil -->
+    <div class="header-top">
+        <div class="header-title">Sparta V0.1</div>
+        <i class="fas fa-user-circle header-icon"></i>        
+        </div>
+    </div>
+    
+    <div class="content">
+        
+        <!-- MAIN SERVICE ACTIVATION CARD -->
+        <div class="main-card">
+            
+            <!-- Logo dan Info Akun -->
+            <div class="logo-container">
+                <!-- Icon Service (diganti menjadi fas fa-phone-alt untuk konsistensi dengan navbar "Bug") -->
+                <i class="fas fa-phone-alt"></i> 
+            </div>
+
+            <div class="user-info-display">
+                <div class="username-text" id="user-display-username">Loading...</div>
+                <div class="role-exp-text" id="user-display-role-exp">Role: Member • Exp: YYYY-MM-DD</div>
+            </div>
+
+            <!-- Target Number -->
+            <div class="target-section">
+                <h4>Target Number</h4>
+                <div class="input-group">
+                    <span>+62</span>
+                    <input type="number" id="target-number" class="target-input" placeholder="8xxxxxxxxx">
+                </div>
+            </div>
+            
+            <!-- Select Service Button (Pengganti Select Bug) -->
+            <button id="select-service-btn" class="action-button select-service-btn">
+                Select Bug <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>
+            </button>
+            
+            <!-- Send Service Button (Pengganti Send Bug) -->
+            <button id="send-service-btn" class="action-button send-service-btn">
+                <i class="fas fa-bolt"></i> ACTIVATE SERVICE
+            </button>
+
+            <!-- Service Selection Dropdown/List -->
+            <div id="service-selection-list">
+                <div class="service-option" data-service="bug1">BUG1</div>
+                <div class="service-option" data-service="bug2">BUG2</div>
+                <div class="service-option" data-service="bug3">BUG3</div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR (NAVBAR FULL) -->
+    <div class="navbar-container">
+        <!-- Item 1: Home/Dashboard -->
+        <div class="nav-item" onclick="window.location.href='dashboard.html'" data-text="Home">
+            <i class="fas fa-home nav-icon"></i>
+            <span class="nav-text">Home</span>
+        </div>
+        
+        <!-- Item 2: Bug (Aktif di halaman ini) -->
+        <div class="nav-item active" data-text="Bug">
+            <i class="fas fa-phone-alt nav-icon"></i>
+            <span class="nav-text">Bug</span>
+        </div>
+        
+        <!-- Item 3: Tools -->
+        <div class="nav-item" onclick="showCustomModal('Fitur Tools belum tersedia.', 'Informasi')" data-text="Tools">
+            <i class="fas fa-bolt nav-icon"></i>
+            <span class="nav-text">Tools</span>
+        </div>
+        
+        <!-- Item 4: Chat -->
+        <div class="nav-item" onclick="showCustomModal('Fitur Chat belum tersedia.', 'Informasi')" data-text="Chat">
+            <i class="fas fa-comment nav-icon"></i>
+            <span class="nav-text">Chat</span>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // --- KONFIGURASI FIREBASE ---
+        // Variabel global (disediakan oleh platform)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        
+        // Inisialisasi Firebase HANYA JIKA KONFIGURASI ADA
+        if (Object.keys(firebaseConfig).length > 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        // --- FUNGSI UTILITY ---
+
+        function logout() {
+            localStorage.removeItem('userSession');
+            window.location.href = "index.html";
+        }
+
+        // Fungsi untuk mengambil data sesi dari localStorage
+        function getSession() {
+            try {
+                const sessionStr = localStorage.getItem('userSession');
+                if (sessionStr) {
+                    const session = JSON.parse(sessionStr);
+                    // Cek masa aktif
+                    if (session.expiresAt !== Infinity && session.expiresAt <= Date.now()) {
+                        logout(); // Otomatis logout jika kadaluarsa
+                        return null; 
+                    }
+                    return session;
+                }
+            } catch (error) {
+                console.error("Error reading session:", error);
+                logout();
+            }
+            return null;
+        }
+
+        // Fungsi untuk menampilkan modal kustom (menggantikan alert())
+        function showCustomModal(message, title = 'Notification') {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
+
+        function closeCustomModal() {
+            document.getElementById('custom-modal').style.display = 'none';
+        }
+        
+        // Fungsi untuk menghitung dan memformat tanggal Exp
+        function formatExpiryDate(session) {
+            if (!session) return 'N/A';
+            
+            const durasi = session.durasi ? session.durasi.toLowerCase() : '';
+            
+            // 1. Permanent
+            if (durasi === 'permanent') {
+                return '9999-99-99';
+            }
+
+            // 2. Monthly Calculation (Xd where d=month)
+            const match = durasi.match(/^(\d+)d$/i); // Mencari pola N(d)
+            
+            if (match) {
+                const months = parseInt(match[1], 10);
+                
+                // Gunakan loginAt sebagai tanggal dasar untuk perhitungan
+                const baseDate = new Date(session.loginAt || Date.now()); 
+                
+                // Set tanggal Exp: Tambahkan jumlah bulan (setMonth menangani overflow tahun)
+                const expiryDate = new Date(baseDate);
+                expiryDate.setMonth(expiryDate.getMonth() + months);
+                
+                // Format YYYY-MM-DD
+                const year = expiryDate.getFullYear();
+                // Month is 0-indexed, so add 1
+                const month = String(expiryDate.getMonth() + 1).padStart(2, '0'); 
+                const day = String(expiryDate.getDate()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            } 
+            
+            // 3. Fallback jika durasi tidak teridentifikasi
+            if (session.expiresAt !== Infinity && session.expiresAt != null) {
+                const expiryDate = new Date(session.expiresAt);
+                const year = expiryDate.getFullYear();
+                const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                const day = String(expiryDate.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            return 'N/A';
+        }
+
+
+        // --- LOGIKA UTAMA SERVICE TOOL ---
+
+        let selectedService = 'bug1'; // Default
+        const serviceSelections = {
+            'bug1': 'BUG1',
+            'bug2': 'BUG2',
+            'bug3': 'BUG3'
+        };
+        
+        const selectServiceBtn = document.getElementById('select-service-btn');
+        const sendServiceBtn = document.getElementById('send-service-btn');
+        const serviceSelectionList = document.getElementById('service-selection-list');
+        const serviceOptions = document.querySelectorAll('.service-option');
+
+        // Toggle Service Selection List
+        selectServiceBtn.addEventListener('click', function(event) {
+            event.stopPropagation();
+            
+            // Hitung posisi dropdown agar muncul di bawah tombol
+            const rect = selectServiceBtn.getBoundingClientRect();
+            
+            if (serviceSelectionList.style.display === 'block') {
+                serviceSelectionList.style.display = 'none';
+            } else {
+                // Atur posisi agar di tengah Card
+                serviceSelectionList.style.top = (rect.bottom - rect.height - serviceSelectionList.parentElement.getBoundingClientRect().top) + 'px'; 
+                serviceSelectionList.style.display = 'block';
+            }
+        });
+
+        // Pilih Service dari List
+        serviceOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                selectedService = this.getAttribute('data-service');
+                // Update teks tombol menjadi BUG yang dipilih
+                selectServiceBtn.innerHTML = `${serviceSelections[selectedService]} <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
+                serviceSelectionList.style.display = 'none'; // Sembunyikan setelah dipilih
+            });
+        });
+
+        // Close Service Selection List saat klik di luar
+        document.addEventListener('click', function(event) {
+            if (event.target !== selectServiceBtn && !serviceSelectionList.contains(event.target)) {
+                serviceSelectionList.style.display = 'none';
+            }
+        });
+
+        // Aksi Tombol Send Service
+        sendServiceBtn.addEventListener('click', function() {
+            const targetNumber = document.getElementById('target-number').value.trim();
+
+            if (!targetNumber || targetNumber.length < 8) {
+                showCustomModal('Masukkan nomor target yang valid (minimal 8 digit, tanpa +62).', 'Input Error');
+                return;
+            }
+
+            if (!selectedService) {
+                showCustomModal('Pilih jenis Service terlebih dahulu.', 'Input Error');
+                return;
+            }
+            
+            // Simulasikan pengiriman
+            const fullTarget = `+62${targetNumber}`;
+            showCustomModal(`Service ${serviceSelections[selectedService]} berhasil diaktifkan ke ${fullTarget}.`, 'SUCCESS');
+        });
+
+        // --- BUG.HTML ON LOAD ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const session = getSession();
+            
+            // Wajib login
+            if (!session) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // --- Tampilkan Info User ---
+            const displayUsername = session.username ? session.username.charAt(0).toUpperCase() + session.username.slice(1) : 'N/A';
+            const role = session.role ? session.role.charAt(0).toUpperCase() + session.role.slice(1) : 'Member';
+            
+            const expFormatted = formatExpiryDate(session); // Gunakan fungsi perhitungan baru
+
+            document.getElementById('user-display-username').textContent = displayUsername;
+            document.getElementById('user-display-role-exp').textContent = `Role: ${role} • Exp: ${expFormatted}`;
+
+            // Set default service selection display
+            selectServiceBtn.innerHTML = `${serviceSelections[selectedService]} <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
+        });
+    </script>
+</body>
+</html>
