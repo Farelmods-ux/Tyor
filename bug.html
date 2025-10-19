@@ -212,7 +212,7 @@
             </div>
 
             <div class="user-info-display">
-                <div class="username-text" id="user-display-username">Loading...</div>
+                <div class="username-text" id="user-display-username">user</div>
                 <div class="role-exp-text" id="user-display-role-exp">Role: Member • Exp: YYYY-MM-DD</div>
             </div>
 
@@ -232,7 +232,7 @@
             
             <!-- Send Service Button (Pengganti Send Bug) -->
             <button id="send-service-btn" class="action-button send-service-btn">
-                <i class="fas fa-bolt"></i> ACTIVATE SERVICE
+                <i class="fas fa-bolt"></i> SEND BUG
             </button>
 
             <!-- Service Selection Dropdown/List -->
@@ -273,103 +273,135 @@
     </div>
 
     <!-- JavaScript -->
-    <script>
-        // --- KONFIGURASI FIREBASE ---
-        // Variabel global (disediakan oleh platform)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        
-        // Inisialisasi Firebase HANYA JIKA KONFIGURASI ADA
-        if (Object.keys(firebaseConfig).length > 0) {
-            firebase.initializeApp(firebaseConfig);
+<script>
+    // --- KONFIGURASI FIREBASE ---
+    // Variabel global (disediakan oleh platform)
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    
+    // Gunakan try...catch untuk menghindari error JSON.parse jika variabel global tidak ada/invalid
+    let firebaseConfig = {};
+    try {
+        firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    } catch (e) {
+        console.error("Firebase config is invalid JSON:", e);
+    }
+    
+    // Inisialisasi Firebase
+    if (Object.keys(firebaseConfig).length > 0) {
+        try {
+             // Cek jika sudah terinisialisasi
+             if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                console.log("Firebase initialized successfully.");
+             }
+        } catch (error) {
+            console.warn("Firebase initialization failed:", error);
+            // Non-kritis: Lanjutkan eksekusi karena sesi tidak menggunakan database Firebase
         }
-        
-        // --- FUNGSI UTILITY ---
+    } else {
+        console.warn("Firebase configuration not found/empty.");
+    }
+    
+    // --- FUNGSI UTILITY ---
 
-        function logout() {
-            localStorage.removeItem('userSession');
-            window.location.href = "index.html";
-        }
+    function logout() {
+        localStorage.removeItem('userSession');
+        // Gunakan replace() agar user tidak bisa kembali ke halaman bug.html
+        window.location.replace("index.html"); 
+    }
 
-        // Fungsi untuk mengambil data sesi dari localStorage
-        function getSession() {
-            try {
-                const sessionStr = localStorage.getItem('userSession');
-                if (sessionStr) {
-                    const session = JSON.parse(sessionStr);
-                    // Cek masa aktif
-                    if (session.expiresAt !== Infinity && session.expiresAt <= Date.now()) {
-                        logout(); // Otomatis logout jika kadaluarsa
-                        return null; 
-                    }
-                    return session;
+    // Fungsi untuk mengambil data sesi dari localStorage
+    function getSession() {
+        try {
+            const sessionStr = localStorage.getItem('userSession');
+            if (sessionStr) {
+                const session = JSON.parse(sessionStr);
+                
+                // Pengecekan sesi yang lebih ketat
+                if (!session.username || !session.loginAt) {
+                    console.error("Session data incomplete.");
+                    logout();
+                    return null;
                 }
-            } catch (error) {
-                console.error("Error reading session:", error);
-                logout();
+
+                // Cek masa aktif
+                if (session.expiresAt !== Infinity && session.expiresAt != null && session.expiresAt <= Date.now()) {
+                    console.log("Session expired.");
+                    logout(); // Otomatis logout jika kadaluarsa
+                    return null; 
+                }
+                return session;
             }
-            return null;
+        } catch (error) {
+            console.error("Error reading or parsing session:", error);
+            logout(); // Jika ada error saat membaca/parse, anggap sesi rusak dan logout
+        }
+        return null;
+    }
+
+    // Fungsi untuk menampilkan modal kustom (menggantikan alert())
+    function showCustomModal(message, title = 'Notification') {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-message').textContent = message;
+        document.getElementById('custom-modal').style.display = 'flex';
+    }
+
+    function closeCustomModal() {
+        document.getElementById('custom-modal').style.display = 'none';
+    }
+    
+    // Fungsi untuk menghitung dan memformat tanggal Exp
+    function formatExpiryDate(session) {
+        if (!session || !session.loginAt) return 'N/A';
+        
+        const durasi = session.durasi ? session.durasi.toLowerCase() : '';
+        
+        if (durasi === 'permanent') {
+            return '9999-99-99';
         }
 
-        // Fungsi untuk menampilkan modal kustom (menggantikan alert())
-        function showCustomModal(message, title = 'Notification') {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-message').textContent = message;
-            document.getElementById('custom-modal').style.display = 'flex';
-        }
-
-        function closeCustomModal() {
-            document.getElementById('custom-modal').style.display = 'none';
+        const match = durasi.match(/^(\d+)d$/i); 
+        
+        if (match) {
+            const months = parseInt(match[1], 10);
+            
+            const baseDate = new Date(session.loginAt); 
+            const expiryDate = new Date(baseDate);
+            expiryDate.setMonth(expiryDate.getMonth() + months);
+            
+            const year = expiryDate.getFullYear();
+            const month = String(expiryDate.getMonth() + 1).padStart(2, '0'); 
+            const day = String(expiryDate.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        } 
+        
+        if (session.expiresAt !== Infinity && session.expiresAt != null) {
+            const expiryDate = new Date(session.expiresAt);
+            const year = expiryDate.getFullYear();
+            const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+            const day = String(expiryDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
         
-        // Fungsi untuk menghitung dan memformat tanggal Exp
-        function formatExpiryDate(session) {
-            if (!session) return 'N/A';
-            
-            const durasi = session.durasi ? session.durasi.toLowerCase() : '';
-            
-            // 1. Permanent
-            if (durasi === 'permanent') {
-                return '9999-99-99';
-            }
+        return 'N/A';
+    }
 
-            // 2. Monthly Calculation (Xd where d=month)
-            const match = durasi.match(/^(\d+)d$/i); // Mencari pola N(d)
-            
-            if (match) {
-                const months = parseInt(match[1], 10);
-                
-                // Gunakan loginAt sebagai tanggal dasar untuk perhitungan
-                const baseDate = new Date(session.loginAt || Date.now()); 
-                
-                // Set tanggal Exp: Tambahkan jumlah bulan (setMonth menangani overflow tahun)
-                const expiryDate = new Date(baseDate);
-                expiryDate.setMonth(expiryDate.getMonth() + months);
-                
-                // Format YYYY-MM-DD
-                const year = expiryDate.getFullYear();
-                // Month is 0-indexed, so add 1
-                const month = String(expiryDate.getMonth() + 1).padStart(2, '0'); 
-                const day = String(expiryDate.getDate()).padStart(2, '0');
-                
-                return `${year}-${month}-${day}`;
-            } 
-            
-            // 3. Fallback jika durasi tidak teridentifikasi
-            if (session.expiresAt !== Infinity && session.expiresAt != null) {
-                const expiryDate = new Date(session.expiresAt);
-                const year = expiryDate.getFullYear();
-                const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
-                const day = String(expiryDate.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-            
-            return 'N/A';
+
+    // --- LOGIKA UTAMA SERVICE TOOL ---
+
+    // Semua logika yang berinteraksi dengan DOM dipindahkan ke dalam DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Cek Sesi Pertama dan Pengecekan Kritis ---
+        const session = getSession();
+        
+        // Wajib login
+        if (!session) {
+            // getSession() sudah memanggil logout(), jadi cukup return
+            return; 
         }
 
-
-        // --- LOGIKA UTAMA SERVICE TOOL ---
-
+        // --- Inisialisasi DOM dan Event Handlers ---
         let selectedService = 'bug1'; // Default
         const serviceSelections = {
             'bug1': 'BUG1',
@@ -381,19 +413,22 @@
         const sendServiceBtn = document.getElementById('send-service-btn');
         const serviceSelectionList = document.getElementById('service-selection-list');
         const serviceOptions = document.querySelectorAll('.service-option');
+        const userDisplayUsername = document.getElementById('user-display-username');
+        const userDisplayRoleExp = document.getElementById('user-display-role-exp');
 
         // Toggle Service Selection List
         selectServiceBtn.addEventListener('click', function(event) {
             event.stopPropagation();
             
-            // Hitung posisi dropdown agar muncul di bawah tombol
             const rect = selectServiceBtn.getBoundingClientRect();
             
             if (serviceSelectionList.style.display === 'block') {
                 serviceSelectionList.style.display = 'none';
             } else {
                 // Atur posisi agar di tengah Card
-                serviceSelectionList.style.top = (rect.bottom - rect.height - serviceSelectionList.parentElement.getBoundingClientRect().top) + 'px'; 
+                // Penyesuaian: Top position harus dihitung relatif terhadap parent yang posisinya non-static (main-card)
+                const cardRect = selectServiceBtn.closest('.main-card').getBoundingClientRect();
+                serviceSelectionList.style.top = (rect.bottom - cardRect.top) + 'px'; 
                 serviceSelectionList.style.display = 'block';
             }
         });
@@ -402,9 +437,9 @@
         serviceOptions.forEach(option => {
             option.addEventListener('click', function() {
                 selectedService = this.getAttribute('data-service');
-                // Update teks tombol menjadi BUG yang dipilih
+                // Update teks tombol
                 selectServiceBtn.innerHTML = `${serviceSelections[selectedService]} <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
-                serviceSelectionList.style.display = 'none'; // Sembunyikan setelah dipilih
+                serviceSelectionList.style.display = 'none'; 
             });
         });
 
@@ -417,7 +452,8 @@
 
         // Aksi Tombol Send Service
         sendServiceBtn.addEventListener('click', function() {
-            const targetNumber = document.getElementById('target-number').value.trim();
+            const targetNumberInput = document.getElementById('target-number');
+            const targetNumber = targetNumberInput.value.trim();
 
             if (!targetNumber || targetNumber.length < 8) {
                 showCustomModal('Masukkan nomor target yang valid (minimal 8 digit, tanpa +62).', 'Input Error');
@@ -431,31 +467,41 @@
             
             // Simulasikan pengiriman
             const fullTarget = `+62${targetNumber}`;
+            // Kirim ke backend atau lakukan aksi di sini
             showCustomModal(`Service ${serviceSelections[selectedService]} berhasil diaktifkan ke ${fullTarget}.`, 'SUCCESS');
+            
+            // Opsional: Clear input setelah sukses
+            targetNumberInput.value = '';
         });
 
-        // --- BUG.HTML ON LOAD ---
-        document.addEventListener('DOMContentLoaded', function () {
-            const session = getSession();
-            
-            // Wajib login
-            if (!session) {
-                window.location.href = "index.html";
-                return;
-            }
+        // --- Tampilkan Info User ---
+        const displayUsername = session.username ? session.username.charAt(0).toUpperCase() + session.username.slice(1) : 'N/A';
+        const role = session.role ? session.role.charAt(0).toUpperCase() + session.role.slice(1) : 'Member';
+        
+        const expFormatted = formatExpiryDate(session); 
 
-            // --- Tampilkan Info User ---
-            const displayUsername = session.username ? session.username.charAt(0).toUpperCase() + session.username.slice(1) : 'N/A';
-            const role = session.role ? session.role.charAt(0).toUpperCase() + session.role.slice(1) : 'Member';
-            
-            const expFormatted = formatExpiryDate(session); // Gunakan fungsi perhitungan baru
+        userDisplayUsername.textContent = displayUsername;
+        userDisplayRoleExp.textContent = `Role: ${role} • Exp: ${expFormatted}`;
 
-            document.getElementById('user-display-username').textContent = displayUsername;
-            document.getElementById('user-display-role-exp').textContent = `Role: ${role} • Exp: ${expFormatted}`;
-
-            // Set default service selection display
-            selectServiceBtn.innerHTML = `${serviceSelections[selectedService]} <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
-        });
-    </script>
-</body>
+        // Set default service selection display
+        selectServiceBtn.innerHTML = `${serviceSelections[selectedService]} <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
+        
+        // --- Tambahkan Event Listener Logout di Icon Profil (di header) ---
+        const userIcon = document.querySelector('.header-icon');
+        if (userIcon) {
+            userIcon.addEventListener('click', function() {
+                // Tampilkan konfirmasi atau langsung logout
+                showCustomModal('Apakah Anda yakin ingin Logout?', 'Konfirmasi Logout');
+                // Ganti tombol OK di modal menjadi tombol Ya/Tidak (atau buat modal baru)
+                const modalButton = document.querySelector('#custom-modal button');
+                modalButton.textContent = 'YA, LOGOUT';
+                modalButton.onclick = function() {
+                    closeCustomModal();
+                    logout();
+                };
+            });
+        }
+    });
+   </script>
+ </body>
 </html>
