@@ -425,8 +425,8 @@
         <div class="gif-banner-container">
             <video src="media/slide.gif" autoplay loop muted playsinline></video>
             <div class="beta-overlay">
-                <h3 id="welcome-message">🔥 Beta Test</h3> 
-                <p id="expiry-info">This Apps Server Still On Beta Test.</p>
+                <h3>🔥 Beta Test</h3> 
+                <p>This Apps Server Still On Beta Test.</p>
             </div>
         </div>
         
@@ -449,6 +449,12 @@
                 </div>
                 <div class="menu-text">Account</div>
             </div>
+            <div class="menu-item" onclick="showCustomModal('Fitur Tools belum tersedia.', 'Informasi')">   
+                <div class="menu-icon-wrapper">
+                    <i class="fas fa-bolt menu-icon"></i>
+                </div>
+                <div class="menu-text">Tools</div>
+            </div>            
         </div>
 
         <div class="telegram-banner" onclick="window.open('https://t.me/allinfosparta', '_blank')">
@@ -664,7 +670,6 @@
 
         function setupOnlineUserListener() {
             const onlineUsersValue = document.getElementById('online-users-value');
-            const activeSenderValue = document.getElementById('active-sender-value');
             
             onlineRef.on('value', (snapshot) => {
                 let onlineCount = 0;
