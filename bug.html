@@ -91,30 +91,129 @@
         position: relative;
     }
 
-    .logo-container { margin-bottom: 25px; }
-    /* Icon Service di Card menggunakan ikon Tools/Cogs */
-    .logo-container i { font-size: 50px; color: #1B47F1; text-shadow: 0 0 10px #0917D7; }
-    .user-info-display { background-color: #2a2a2a; padding: 15px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #444; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); }
-    .username-text { font-size: 18px; font-weight: 800; color: white; margin-bottom: 10px; }
-    .role-exp-text { font-size: 13px; color: #B3C0FF; font-weight: 500; }
-    .target-section { margin-bottom: 25px; }
-    .target-section h4 { color: white; font-weight: 600; margin-bottom: 15px; font-size: 16px; text-align: left; }
-    .input-group { display: flex; align-items: center; background-color: #0d0d0d; border: 1px solid #333; border-radius: 8px; padding: 5px 15px; }
-    .input-group span { color: #B3C0FF; font-size: 16px; font-weight: 600; margin-right: 10px; }
-    .target-input { flex-grow: 1; background: none; border: none; color: white; font-size: 16px; padding: 8px 0; outline: none; font-family: 'Poppins', sans-serif; }
-    .action-button { width: 100%; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background-color 0.2s, transform 0.1s; margin-bottom: 15px; border: none; display: flex; align-items: center; justify-content: center; }
-    .select-service-btn { background-color: #333; color: white; border: 1px solid #555; }
-    .select-service-btn:hover { background-color: #444; }
+    .logo-container { 
+        margin-bottom: 25px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60px; /* Sesuaikan dengan tinggi GIF agar tidak bergeser */
+    }
+
+    /* Gaya untuk GIF baru */
+    .service-gif { 
+        width: 60px; /* Ukuran GIF */
+        height: 60px; 
+        object-fit: contain; 
+        border-radius: 50%; /* Opsional: membuat GIF berbentuk lingkaran */
+        box-shadow: 0 0 15px rgba(27, 71, 241, 0.7); /* Efek glow biru */
+        animation: pulse 2s infinite alternate; /* Animasi berdenyut */
+    }
+
+    /* Keyframes untuk animasi pulse */
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 10px rgba(27, 71, 241, 0.5); }
+        100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(27, 71, 241, 1); }
+    }
+
+    .user-info-display { 
+        background-color: #2a2a2a; 
+        padding: 15px; 
+        border-radius: 10px; 
+        margin-bottom: 25px; 
+        border: 1px solid #444; 
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    
+    .username-text { 
+        font-size: 18px; 
+        font-weight: 800; 
+        color: white; 
+        margin-bottom: 10px; 
+    }
+    
+    .role-exp-text { 
+        font-size: 13px; 
+        color: #B3C0FF; 
+        font-weight: 500;
+    }
+    
+    .target-section { 
+        margin-bottom: 25px; 
+    }
+    
+    .target-section h4 { 
+        color: white; 
+        font-weight: 600;
+        margin-bottom: 15px;
+        font-size: 16px;
+        text-align: left; 
+    }
+    
+    .input-group {
+        display: flex;
+        align-items: center; 
+        background-color: #0d0d0d; 
+        border: 1px solid #333; 
+        border-radius: 8px; 
+        padding: 5px 15px; 
+    }
+
+    .input-group span {
+        color: #B3C0FF; 
+        font-size: 16px; 
+        font-weight: 600; 
+        margin-right: 10px;
+    }
+    
+    .target-input { 
+        flex-grow: 1; 
+        background: none; 
+        border: none; 
+        color: white; 
+        font-size: 16px; 
+        padding: 8px 0; 
+        outline: none; 
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .action-button { 
+        width: 100%; 
+        padding: 12px; 
+        border-radius: 8px; 
+        font-size: 16px; 
+        font-weight: 700; 
+        cursor: pointer; 
+        transition: background-color 0.2s, 
+        transform 0.1s; 
+        margin-bottom: 15px; 
+        border: none; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+    }
+    
+    .select-service-btn {
+        background-color: #333; 
+        color: white;
+        border: 1px solid #555; 
+    }
+    
+    .select-service-btn:hover {
+        background-color: #444; 
+    }
+    
     .send-service-btn { 
         background: linear-gradient(90deg, #F81CF8 0%, #B900FF 100%); 
         color: white; 
         /* Warna tombol disamakan dengan warna di dashboard.html (Telegram Banner) */
         box-shadow: 0 4px 15px rgba(185, 0, 255, 0.4); 
     }
+    
     .send-service-btn:hover { 
         background: linear-gradient(90deg, #FF45FF 0%, #D41AFF 100%); 
         transform: translateY(-1px); 
     }
+    
     .send-service-btn i { margin-right: 10px; font-size: 18px; }
 
     /* Dropdown / Modal untuk Select Bug */
@@ -133,9 +232,23 @@
         /* margin-top: -15px; */ /* Dihapus, diganti dengan properti top yang dihitung */
     }
 
-    .service-option { padding: 12px 20px; cursor: pointer; color: #ccc; border-bottom: 1px solid #333; text-align: left; transition: background-color 0.2s; }
-    .service-option:last-child { border-bottom: none; }
-    .service-option:hover { background-color: #0917D7; color: white; }
+    .service-option { 
+        padding: 12px 20px; 
+        cursor: pointer; 
+        color: #ccc; 
+        border-bottom: 1px solid #333; 
+        text-align: left; 
+        transition: background-color 0.2s; 
+    }
+    
+    .service-option:last-child { 
+        border-bottom: none;
+    }
+ 
+    .service-option:hover { 
+        background-color: #0917D7; 
+        color: white; 
+    }
 
     /* Notifikasi & Modal Kustom - DISAMAKAN DENGAN DASHBOARD */
     #custom-modal { 
@@ -143,18 +256,21 @@
         display: none; justify-content: center; align-items: center; z-index: 1000;
         opacity: 0; transition: opacity 0.3s ease;
     }
+    
     .custom-modal.show { opacity: 1; display: flex; }
     .modal-content { 
         background: #1a1a1a; padding: 25px; border-radius: 12px; width: 90%; max-width: 300px; 
         border: 2px solid #1B47F1; /* Border disamakan */
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); text-align: center; 
     }
+    
     .modal-content h3 { color: #1B47F1; margin-bottom: 15px; font-size: 18px; }
     .modal-content p { color: #ccc; margin-bottom: 20px; font-size: 14px; }
     .modal-content button { 
         background-color: #1B47F1; color: white; border: none; padding: 10px 20px; border-radius: 6px; 
         cursor: pointer; font-weight: 600; transition: background-color 0.3s;
     }
+    
     .modal-content button:hover { background-color: #0917D7; }
     
     /* --- Bottom Navigation Bar (Navbar Full) --- */
@@ -236,9 +352,9 @@
     <div class="content">
         
         <div class="main-card">
-            
+ 
             <div class="logo-container">
-                <i class="fas fa-phone-alt"></i> 
+                <img src="https://files.catbox.moe/vzmw6r.mp4" alt="Bug Service Animation" class="service-gif">
             </div>
 
             <div class="user-info-display">
@@ -550,4 +666,4 @@
     });
    </script>
  </body>
-    </html>
+</html>
