@@ -5,11 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sparta V0.1 - Dashboard</title>
-    <!-- Firebase SDKs (Diperlukan untuk Realtime Database) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     
-    <!-- Google Font & Icon -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
@@ -17,26 +15,27 @@
     /* CSS umum */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* PERUBAHAN KRITIS: Body Full Screen dan Hapus Scroll */
+    /* PERBAIKAN KRITIS: Body Anti-Stuck dan Scroll */
     body { 
         background: black; 
         font-family: 'Poppins', sans-serif; 
         color: white; 
-        height: 100vh; /* Tinggi penuh viewport */
-        width: 100vw; /* Lebar penuh viewport */
+        min-height: 100vh; /* Menggantikan height: 100vh dan overflow: hidden */
+        display: flex; 
+        flex-direction: column;
+        align-items: center; /* Menengahkan konten di layar lebar */
         position: relative; 
-        display: flex; /* Menggunakan flexbox untuk tata letak utama */
-        flex-direction: column; /* Konten disusun vertikal */
-        overflow: hidden; /* HAPUS SCROLL UTAMA */
+        padding-bottom: 70px; /* Jarak untuk Navbar fixed */
     }
     
     /* Perubahan untuk membuat konten bisa di-scroll secara internal */
     .content-container {
-        flex-grow: 1; /* Kontainer mengambil sisa tinggi yang tersedia */
-        overflow-y: auto; /* Memungkinkan scrolling internal jika konten melebihi tinggi */
-        padding: 0 20px 10px 20px; /* Padding bawah 10px, Navbar sudah 70px */
+        flex-grow: 1; 
+        overflow-y: auto; 
+        padding: 0 20px 10px 20px; 
         width: 100%;
-        -webkit-overflow-scrolling: touch; /* Sentuhan scroll yang lebih halus di iOS */
+        max-width: 500px; /* NEW: Batas lebar */
+        -webkit-overflow-scrolling: touch; 
     }
 
     /* --- Custom Header Styles --- */
@@ -45,10 +44,14 @@
         justify-content: space-between;
         align-items: center;
         padding: 15px 20px;
+        width: 100%;
+        max-width: 500px; /* NEW */
         background: black;
-        /* Hapus position: sticky karena body sudah flex dan fixed */
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); /* NEW */
+        position: sticky; /* NEW: Agar tetap di atas saat scroll */
+        top: 0; /* NEW */
         z-index: 100;
-        flex-shrink: 0; /* Pastikan header tidak menyusut */
+        flex-shrink: 0; 
     }
 
     .header-title {
@@ -64,40 +67,27 @@
         cursor: pointer;
     }
 
-    /* --- Image Slider (Carousel) Styles --- */
-    .slider-container {
+    /* --- GIF/Video Banner Styles (Pengganti Slider) --- */
+    /* Menghapus .slider-container, .slider-wrapper, .slide-item */
+    .gif-banner-container {
         position: relative;
         overflow: hidden;
         border-radius: 15px;
         margin-top: 15px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-        height: 0; 
+        height: auto; 
         padding-bottom: 56.25%; /* Rasio 16:9 */
         background: black; 
-        flex-shrink: 0; /* Penting agar slider tidak terdistorsi saat scrolling */
+        flex-shrink: 0; 
     }
-
-    .slider-wrapper {
-        display: flex;
-        transition: transform 0.3s ease-in-out;
-        width: 300%; 
-        position: absolute; 
+    
+    .gif-banner-container video {
+        position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    .slide-item {
         width: 100%;
-        flex-shrink: 0;
-        position: relative;
-    }
-
-    .slide-item img {
-        width: 100%;
-        height: 100%; 
-        object-fit: contain; 
+        height: 100%;
+        object-fit: cover; 
         display: block;
     }
     
@@ -111,12 +101,12 @@
         background: rgba(0, 0, 0, 0.4);
         color: white;
         text-align: left;
+        z-index: 10; /* NEW: Pastikan di atas video */
     }
     
     .beta-overlay h3 {
         font-size: 20px;
         font-weight: 800;
-        /* Warna website (biru) */
         color: #1B47F1; 
         text-shadow: 0 0 5px #0917D7;
     }
@@ -278,20 +268,26 @@
         text-align: right;
     }
     
-    /* --- Navbar Horizontal Styles --- */
+    /* --- Navbar Horizontal Styles (FIXED/BUG.HTML) --- */
     .navbar-container {
-        /* Hapus position: fixed, gunakan flexbox */
+        position: fixed; /* Menggantikan flexbox lama */
+        bottom: 0; /* NEW */
+        left: 0; /* NEW */
         width: 100%;
+        max-width: 500px; /* NEW */
+        margin: 0 auto; /* NEW */
         background: #0d0d0d; 
         border-top: 3px solid #1B47F1; 
         box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.7); 
-        padding: 5px 0;
+        padding: 5px 0; /* NEW */
         display: flex;
         justify-content: space-around; 
         align-items: center;
-        z-index: 50;
+        height: 60px; /* NEW */
+        z-index: 200; /* NEW */
         backdrop-filter: blur(5px);
-        flex-shrink: 0; /* Pastikan navbar tidak menyusut */
+        flex-shrink: 0; 
+        padding-bottom: env(safe-area-inset-bottom, 0); /* NEW */
     }
 
     .nav-item {
@@ -304,7 +300,8 @@
         flex-direction: column; 
         justify-content: center;
         align-items: center;
-        padding: 0; 
+        padding: 5px; /* NEW: Sesuaikan padding */
+        width: 25%; /* NEW: Bagi rata 4 item */
     }
     
     .nav-item:hover {
@@ -315,6 +312,7 @@
         font-size: 24px;
         color: #404040; 
         transition: color 0.3s;
+        margin-bottom: 4px; /* NEW */
     }
 
     .nav-item.active .nav-icon {
@@ -323,47 +321,39 @@
     }
     
     .nav-text {
-        position: static; 
-        transform: none;
-        font-size: 14px; 
+        font-size: 14px; /* NEW: Ganti font size */
         font-weight: 500;
         color: #B3C0FF; 
-        background: none; 
-        padding: 0; 
-        border-radius: 0; 
-        display: block; 
         white-space: nowrap;
-        box-shadow: none;
-        z-index: 60;
         line-height: 1.2; 
-        margin-top: 2px; 
     }
 
-    /* --- Modal CSS --- */
+    /* Modal CSS (Perbaikan Anti-Stuck) */
     .custom-modal {
         display: none;
         position: fixed;
-        z-index: 1000;
+        z-index: 99999; /* Z-Index Tinggi */
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0,0,0,0.7);
         align-items: center;
         justify-content: center;
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none; /* NEW: Mencegah stuck */
     }
     
     .custom-modal.show {
         opacity: 1;
-        display: flex; /* Ganti display agar transisi opacity bekerja */
+        display: flex;
+        pointer-events: auto; /* NEW: Aktifkan saat tampil */
     }
 
     .modal-content {
         background-color: #1a1a1a;
-        margin: 15% auto;
+        margin: auto; /* Perbaikan margin */
         padding: 25px;
         border: 2px solid #1B47F1;
         border-radius: 12px;
@@ -400,11 +390,24 @@
     .modal-button:hover {
         background: #cc3333;
     }
+
+    /* Area mobile (supaya navbar/header tetap di tengah) */
+    @media (min-width: 500px) {
+        .navbar-container {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header-top { 
+            left: 50%;
+            transform: translateX(-50%);
+            position: fixed; 
+            top: 0;
+        }
+    }
 </style>
 </head>
 
 <body>
-    <!-- Modal -->
     <div id="custom-modal" class="custom-modal">
         <div class="modal-content">
             <h3 id="modal-title">Peringatan!</h3>
@@ -413,33 +416,20 @@
         </div>
     </div>
 
-    <!-- Header (Fixed di atas) -->    
     <div class="header-top">
         <div class="header-title">Sparta V0.1</div>
         <i class="fas fa-user-circle header-icon"></i>
-        </div>
-    </div>        
-
-        <!-- Image Slider -->
-        <div id="image-slider" class="slider-container">
-            <div class="slider-wrapper">
-                <div class="slide-item">
-                    <img src="https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1" onerror="this.src='https://placehold.co/800x450/1B47F1/ffffff?text=Slide+1'" alt="Slider Image 1">
-                    <div class="beta-overlay">
-                        <h3>🔥 Beta Test</h3>
-                        <p>This  Apps  Server  Still  On  Beta  Test.</p>
-                    </div>
-                </div>
-                <div class="slide-item">
-                    <img src="https://placehold.co/800x450/7A09FA/ffffff?text=Slide+2" onerror="this.src='https://placehold.co/800x450/7A09FA/ffffff?text=Slide+2'" alt="Slider Image 2">
-                </div>
-                <div class="slide-item">
-                    <img src="https://placehold.co/800x450/F81CF8/ffffff?text=Slide+3" onerror="this.src='https://placehold.co/800x450/F81CF8/ffffff?text=Slide+3'" alt="Slider Image 3">
-                </div>
+    </div>
+        
+    <div class="content-container"> 
+        <div class="gif-banner-container">
+            <video src="media/slide.gif" autoplay loop muted playsinline></video>
+            <div class="beta-overlay">
+                <h3 id="welcome-message">🔥 Beta Test</h3> 
+                <p id="expiry-info">This Apps Server Still On Beta Test.</p>
             </div>
         </div>
         
-        <!-- Menu Buttons -->
         <div class="menu-buttons">
             <div class="menu-item" onclick="window.open('https://t.me/Farelmod', '_blank')">
                 <div class="menu-icon-wrapper">
@@ -447,13 +437,13 @@
                 </div>
                 <div class="menu-text">Telegram</div>
             </div>
-            <div class="menu-item" onclick="showCustomModal('Fitur belum tersedia.', 'Informasi')">        
+            <div class="menu-item" onclick="showCustomModal('Fitur Chat belum tersedia.', 'Informasi')">        
                 <div class="menu-icon-wrapper">
                     <i class="fas fa-comment menu-icon"></i>
                 </div>
                 <div class="menu-text">Chat</div>
             </div>
-            <div class="menu-item" onclick="showCustomModal('Fitur belum tersedia.', 'Informasi')">   
+            <div class="menu-item" onclick="showCustomModal('Fitur Account belum tersedia.', 'Informasi')">   
                 <div class="menu-icon-wrapper">
                     <i class="fas fa-cog menu-icon"></i>
                 </div>
@@ -461,7 +451,6 @@
             </div>
         </div>
 
-        <!-- Telegram Banner -->
         <div class="telegram-banner" onclick="window.open('https://t.me/allinfosparta', '_blank')">
             <div class="telegram-text">
                 <h4>Join Telegram Channel!</h4>
@@ -470,7 +459,6 @@
             <i class="fa-brands fa-telegram telegram-icon"></i>
         </div>
 
-        <!-- Server Stats Widget (Penghitung Real-time) -->
         <div class="stats-widget">
             <div class="stats-title">
                 <i class="fa-solid fa-server" style="margin-right: 8px;"></i> Status Server
@@ -480,7 +468,6 @@
                     <i class="fa-solid fa-user-check stats-icon"></i> Online Users
                 </div>
                 <div class="stats-value-container">
-                    <!-- ID ini akan diupdate secara real-time oleh Firebase -->
                     <span id="online-users-value" class="stats-value">0</span>
                 </div>
             </div>
@@ -489,32 +476,27 @@
                     <i class="fa-solid fa-message stats-icon"></i> Active Sender
                 </div>
                 <div class="stats-value-container">
-                    <!-- ID ini juga akan diupdate (Simulasi berdasarkan Online Users) -->
                     <span id="active-sender-value" class="stats-value">0</span>
                 </div>
             </div>
         </div>
 
-        <!-- Dummy Content untuk memastikan scrolling internal berfungsi -->
-        <div style="height: 50px;"></div> 
-    </div>
-            
-    <!-- Navbar Bawah (Fixed di bawah) -->
-    <div class="navbar-container">
+        <div style="height: 20px;"></div> 
+
+    </div> <div class="navbar-container">
         <div class="nav-item active" data-text="Home">
             <i class="fas fa-home nav-icon"></i>
             <span class="nav-text">Home</span>
         </div>
-        <!-- Item 2: Bug -->
         <div class="nav-item" onclick="window.location.href='bug.html'" data-text="Bug">
             <i class="fas fa-phone-alt nav-icon"></i>
             <span class="nav-text">Bug</span>
         </div>        
-        <div class="nav-item" data-text="Tools">
+        <div class="nav-item" onclick="showCustomModal('Fitur Tools belum tersedia.', 'Informasi')" data-text="Tools">
             <i class="fas fa-bolt nav-icon"></i>
             <span class="nav-text">Tools</span>
         </div>
-        <div class="nav-item" data-text="Chat"
+        <div class="nav-item" onclick="showCustomModal('Fitur Chat belum tersedia.', 'Informasi')" data-text="Chat">
             <i class="fas fa-comment nav-icon"></i>
             <span class="nav-text">Chat</span>
         </div>
@@ -537,14 +519,14 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
-        const onlineRef = db.ref('onlineUsers'); // Node khusus untuk menyimpan status online
+        const onlineRef = db.ref('onlineUsers'); 
         
         // Konstanta Heartbeat
-        const HEARTBEAT_INTERVAL = 15000; // Kirim heartbeat setiap 15 detik
-        const USER_TIMEOUT = 30000; // User dianggap offline jika tidak ada heartbeat selama 30 detik
-        const CHECK_INTERVAL = 10000; // Interval cek hapus akun
+        const HEARTBEAT_INTERVAL = 15000; 
+        const USER_TIMEOUT = 30000; 
+        const CHECK_INTERVAL = 10000; 
 
-        // --- KRITIS: Session dan Fetch Functions dari index.html (Kode penting yang tidak diubah) ---
+        // --- KRITIS: Session dan Fetch Functions dari index.html ---
         const raw_aksesURL = "https://raw.githubusercontent.com/Farelmods-ux/database/main/akses.json";
         
         function clearSession() {
@@ -587,25 +569,36 @@
             return fetchJSON(raw_aksesURL);
         }
 
-        // --- FUNGSI MODAL DASHBOARD (Kode penting yang tidak diubah) ---
+        // --- FUNGSI MODAL DASHBOARD (Diperbaiki agar Anti-Stuck) ---
         const customModal = document.getElementById('custom-modal');
         const modalText = document.getElementById('modal-text');
         const modalTitle = document.getElementById('modal-title');
-        const btnLogoutModal = document.getElementById('btn-logout-modal');
-
+        
         function showCustomModal(message, title = "Peringatan!") {
+            const modalButton = customModal.querySelector('.modal-button');
             modalTitle.textContent = title;
             modalText.textContent = message;
-            customModal.style.display = 'flex';
-            setTimeout(() => customModal.classList.add('show'), 10);
             
-            document.body.style.pointerEvents = 'none';
+            // Atur ulang tombol default
+            modalButton.textContent = 'OK';
+            modalButton.style.backgroundColor = '#1B47F1';
+            modalButton.onclick = closeCustomModal;
+
+            customModal.classList.add('show');
+            customModal.style.display = 'flex';
             customModal.style.pointerEvents = 'auto';
+            
+            setTimeout(() => { modalButton.focus(); }, 50); 
+        }
+
+        function closeCustomModal() {
+            customModal.classList.remove('show');
+            customModal.style.pointerEvents = 'none';
+            setTimeout(() => { customModal.style.display = 'none'; }, 300);
         }
 
         function performLogout() {
             const session = getSession();
-            // PERUBAHAN KRITIS: Hapus user dari online list saat logout manual
             if (session && session.username) {
                  onlineRef.child(session.username).remove();
             }
@@ -613,12 +606,23 @@
             window.location.href = "index.html";
         }
         
-        btnLogoutModal.addEventListener('click', function() {
-            performLogout();
+        // OLD: btnLogoutModal.addEventListener('click', function() { performLogout(); }); 
+        // Hapus event listener lama di btnLogoutModal, digantikan oleh logic showCustomModal
+
+        // NEW: Event Listener untuk Icon Profil di Header
+        document.querySelector('.header-icon').addEventListener('click', function() {
+            showCustomModal('Apakah Anda yakin ingin Logout?', 'Konfirmasi Logout');
+            const modalButton = document.querySelector('#custom-modal .modal-button');
+            modalButton.textContent = 'YA, LOGOUT';
+            modalButton.style.backgroundColor = '#ff4444';
+            modalButton.onclick = function() {
+                closeCustomModal();
+                performLogout();
+            };
         });
 
 
-        // --- LOGIKA REAL-TIME DELETION CHECK (Kode penting yang tidak diubah) ---
+        // --- LOGIKA REAL-TIME DELETION CHECK ---
         let checkDeletionIntervalId;
 
         function checkRealTimeDeletion(username) {
@@ -626,27 +630,29 @@
                 const list = await fetchAccessList();
                 if (!list) return; 
 
-                const found = list.find(u => (u.username == username));
+                const found = list.find(u => u && u.username == username);
 
                 if (!found) {
                     clearInterval(checkDeletionIntervalId);
                     clearSession();
-                    // Hapus data online saat akun dihapus
                     onlineRef.child(username).remove();
                     showCustomModal("Akun Anda Telah Dihapus, Silahkan Beli Lagi", "Akun Dihapus!");
+                    
+                    const modalButton = document.querySelector('#custom-modal .modal-button');
+                    modalButton.textContent = 'Logout';
+                    modalButton.style.backgroundColor = '#ff4444';
+                    modalButton.onclick = performLogout;
                 }
             }, CHECK_INTERVAL);
         }
         
-        // --- LOGIKA HEARTBEAT OTOMATIS (BARU untuk Online Users) ---
+        // --- LOGIKA HEARTBEAT OTOMATIS ---
         
         function startHeartbeat(username) {
             const userRef = onlineRef.child(username);
             
-            // 1. Set onDisconnect: Hapus data jika user menutup browser/tab secara tiba-tiba
             userRef.onDisconnect().remove(); 
 
-            // 2. Kirim "Heartbeat" (timestamp server) secara berkala
             setInterval(() => {
                 userRef.set({ 
                     lastActive: firebase.database.ServerValue.TIMESTAMP 
@@ -654,13 +660,12 @@
             }, HEARTBEAT_INTERVAL); 
         }
 
-        // --- LOGIKA UPDATE STATS REAL-TIME (BARU untuk Online Users) ---
+        // --- LOGIKA UPDATE STATS REAL-TIME ---
 
         function setupOnlineUserListener() {
             const onlineUsersValue = document.getElementById('online-users-value');
             const activeSenderValue = document.getElementById('active-sender-value');
             
-            // Dengarkan perubahan data di node 'onlineUsers' secara Real-time
             onlineRef.on('value', (snapshot) => {
                 let onlineCount = 0;
                 let activeSender = 0; 
@@ -671,95 +676,46 @@
                 if (users) {
                     const userList = Object.keys(users);
                     
-                    // Hitung user yang lastActive-nya masih dalam batas waktu 30 detik
                     for (let username of userList) {
-                        const lastActive = users[username].lastActive || 0;
+                        const lastActive = users[username] ? users[username].lastActive : 0;
                         
-                        // User dianggap online jika heartbeat kurang dari USER_TIMEOUT
                         if (currentTime - lastActive < USER_TIMEOUT) {
                             onlineCount++;
                         }
                     }
                     
-                    // Simulasikan Active Sender: 80% dari Online Users + random kecil
-                    // Ini adalah simulasi sederhana. Logika sebenarnya mungkin berbeda.
                     activeSender = Math.max(0, Math.floor(onlineCount * 0.8) + Math.floor(Math.random() * 3));
                 }
                 
-                // Update tampilan
                 onlineUsersValue.textContent = onlineCount.toString();
                 activeSenderValue.textContent = activeSender.toString();
             });
         }
+        
+        // NEW: Fungsi Helper Format Tanggal
+        function formatExpiryDate(session) {
+            if (!session || !session.loginAt || session.expiresAt === undefined) return 'N/A';
+            
+            const durasi = session.durasi ? session.durasi.toLowerCase() : '';
+            
+            if (durasi === 'permanent') {
+                return '9999-99-99';
+            }
 
-        // --- LOGIKA IMAGE SLIDER & NAVBAR (Kode penting yang tidak diubah) ---
-        const slider = document.getElementById('image-slider');
-        const sliderWrapper = slider.querySelector('.slider-wrapper');
-        const totalSlides = sliderWrapper.querySelectorAll('.slide-item').length;
-        let currentSlide = 0;
-
-        function goToSlide(index) {
-            if (index >= totalSlides) { index = 0; }
-            if (index < 0) { index = totalSlides - 1; }
-            currentSlide = index;
-            const offset = (-currentSlide * 100) / totalSlides;
-            sliderWrapper.style.transform = `translateX(${offset}%)`; 
+            if (session.expiresAt !== Infinity && session.expiresAt != null) {
+                const expiryDate = new Date(session.expiresAt);
+                const year = expiryDate.getFullYear();
+                const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                const day = String(expiryDate.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            return 'N/A';
         }
 
-        setInterval(() => {
-            goToSlide(currentSlide + 1);
-        }, 5000);
-        
-        let startX = 0;
-        let endX = 0;
-        
-        slider.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            sliderWrapper.style.transition = 'none'; 
-        });
-        
-        slider.addEventListener('touchmove', (e) => {
-            endX = e.touches[0].clientX;
-            const diff = endX - startX;
-            const currentOffset = -currentSlide * slider.offsetWidth;
-            sliderWrapper.style.transform = `translateX(${currentOffset + diff}px)`;
-        });
-        
-        slider.addEventListener('touchend', () => {
-            const diff = endX - startX;
-            const threshold = 50; 
-            sliderWrapper.style.transition = 'transform 0.3s ease-in-out'; 
-            
-            if (diff > threshold) {
-                goToSlide(currentSlide - 1);
-            } else if (diff < -threshold) {
-                goToSlide(currentSlide + 1);
-            } else {
-                goToSlide(currentSlide);
-            }
-        });
 
-        const navItems = document.querySelectorAll('.nav-item');
-
-        function setActiveNavItem(clickedItem) {
-            navItems.forEach(item => {
-                item.classList.remove('active');
-            });
-            clickedItem.classList.add('active');
-            
-            if (clickedItem.getAttribute('data-text') === 'Logout') {
-                 showCustomModal('Apakah Anda yakin ingin logout?', 'Konfirmasi Logout');
-            } else {
-                console.log(`Menu diklik: ${clickedItem.getAttribute('data-text')}`);
-            }
-        }
-
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                setActiveNavItem(this);
-            });
-        });
-
+        // --- LOGIKA IMAGE SLIDER & NAVBAR (HAPUS SEMUA) ---
+        // Menghapus semua logika slider lama di sini.
 
         // --- DASHBOARD ON LOAD & MASTER INITIATION ---
         document.addEventListener('DOMContentLoaded', function () {
@@ -770,28 +726,23 @@
                 return;
             }
 
-            // Tampilkan info user (Kode penting yang tidak diubah)
+            // Tampilkan info user (Sesuai permintaan, tidak hapus welcome message lama, tapi tambahkan format baru)
             const displayUsername = session.username.charAt(0).toUpperCase() + session.username.slice(1);
-            document.getElementById('welcome-message').textContent = `Selamat Datang, ${displayUsername}!`;
             
-            if (session.expiresAt !== Infinity) {
-                const roleText = session.role === 'owner' ? ' Owner' : '';
-                const expiryDate = new Date(session.expiresAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-                document.getElementById('expiry-info').textContent = `Masa Aktif: ${session.durasi}${roleText} (berakhir ${expiryDate})`;
-            } else {
-                const roleText = session.role === 'owner' ? ' Owner' : '';
-                document.getElementById('expiry-info').textContent = `Masa Aktif: Permanent${roleText} (Tidak akan dihapus)`;
-            }
+            // Mengganti update welcome-message dan expiry-info
+            document.getElementById('welcome-message').textContent = `${displayUsername} (Role: ${session.role.charAt(0).toUpperCase() + session.role.slice(1)})`;
+            
+            const expFormatted = formatExpiryDate(session);
+            document.getElementById('expiry-info').textContent = `Masa Aktif Berakhir: ${expFormatted}`;
 
             // Mulai pengecekan real-time (Penghapusan Akun)
             checkRealTimeDeletion(session.username);
             
-            // PERUBAHAN KRITIS: Gantikan logika status server lama dengan Firebase Heartbeat
+            // Gantikan logika status server lama dengan Firebase Heartbeat
             setupOnlineUserListener();
             startHeartbeat(session.username); 
 
-            // Inisialisasi slider
-            goToSlide(0);
+            // Hapus: Inisialisasi slider goToSlide(0);
         });
 
     </script>
