@@ -99,20 +99,27 @@
         min-height: 60px; /* Sesuaikan dengan tinggi GIF agar tidak bergeser */
     }
 
-    /* Gaya untuk GIF baru */
+    /* Gaya untuk GIF/Video baru */
     .service-gif { 
-        width: 60px; /* Ukuran GIF */
-        height: 60px; 
-        object-fit: contain; 
-        border-radius: 50%; /* Opsional: membuat GIF berbentuk lingkaran */
+        width: 100%;
+        max-width: 150px; 
+        height: auto; 
+        object-fit: cover;
+        border-radius: 8px; 
         box-shadow: 0 0 15px rgba(27, 71, 241, 0.7); /* Efek glow biru */
-        animation: pulse 2s infinite alternate; /* Animasi berdenyut */
+        animation: none;
     }
 
-    /* Keyframes untuk animasi pulse */
+    .logo-container { 
+        margin-bottom: 25px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Ubah tinggi minimum agar sesuai dengan tinggi video */
+        min-height: 80px; 
+    }
+
     @keyframes pulse {
-        0% { transform: scale(1); box-shadow: 0 0 10px rgba(27, 71, 241, 0.5); }
-        100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(27, 71, 241, 1); }
     }
 
     .user-info-display { 
@@ -599,55 +606,46 @@
                 serviceSelectionList.style.display = 'none';
             }
         });
-
-        // Aksi Tombol Send Service (Validasi Baru di Sini)
+        
+                // Aksi Tombol Send Service
         sendServiceBtn.addEventListener('click', function() {
             const targetNumber = targetNumberInput.value.trim();
 
-            // 1. Validasi Nomor Kosong (Harap masukan nomor target!)
             if (targetNumber === '') {
                 showCustomModal('Harap masukan nomor target!', 'Input Error', true);
                 return;
             }
 
-            // Regex untuk mengecek apakah ada simbol selain angka (0-9)
-            // ^\d+$ berarti hanya boleh mengandung angka dari awal string sampai akhir string.
             const isSymbol = !/^\d+$/.test(targetNumber); 
             
-            // 2. Validasi Simbol
             if (isSymbol) {
                 showCustomModal('Simbol ditemukan, harap hapus simbol dan kembali masukan nomor!', 'Input Error', true);
                 return;
             }
             
-            // 3. Validasi Panjang Nomor (Minimal 8 digit, setelah dipastikan hanya angka)
             if (targetNumber.length < 8) {
                 showCustomModal('Nomor target minimal 8 digit!', 'Input Error', true);
                 return;
             }
-
-            // 4. Nomor Valid (Nomor target valid!)
-            showCustomModal(`Nomor target valid: 8${targetNumber.substring(1)}!`, 'Validasi Sukses');
             
-            // Cek apakah Bug Type sudah dipilih sebelum melanjutkan ke pengiriman
             if (!selectedService) {
                 showCustomModal('Pilih jenis Bug terlebih dahulu!', 'Input Error', true);
                 return;
             }
             
-            // --- LOGIKA PENGIRIMAN BUG ---
+            // --- LOGIKA PENGIRIMAN BUG (Dijalankan hanya jika semua validasi sukses) ---
             const fullTarget = `+62${targetNumber}`;
-            
-            // Simulasikan pengiriman setelah semua validasi sukses
-            // (Hapus baris validasi sukses di atas jika kamu mau langsung kirim)
-            
-            /*
+
+            // *** Perbaikan: Tampilkan popup sukses dan reset input ***
+            // Karena ini masih simulasi, kita langsung tampilkan sukses setelah semua cek dilewati
             showCustomModal(`Successfully Sending Bug Type ${serviceSelections[selectedService]} To Target: ${fullTarget}!`, 'DONE BUG🔥', false);
             
+            // Bersihkan input setelah "pengiriman" sukses
             targetNumberInput.value = '';
             selectedService = '';
             selectServiceBtn.innerHTML = `Select Bug <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
-            */
+            
+            // Tidak perlu ada "return" di sini karena logika selesai
         });
         
         // Event Listener untuk Logout di Icon Profil
@@ -666,4 +664,4 @@
     });
    </script>
  </body>
-</html>
+    </html>
