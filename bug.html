@@ -90,36 +90,23 @@
         text-align: center;
         position: relative;
     }
-
+    
     .logo-container { 
         margin-bottom: 25px; 
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 60px; /* Sesuaikan dengan tinggi GIF agar tidak bergeser */
+        min-height: 100px; /* Diperbesar agar sesuai dengan video yang lebih besar */
     }
 
-    /* Gaya untuk GIF/Video baru */
     .service-gif { 
-        width: 100%;
-        max-width: 150px; 
+        width: 100%; 
+        max-width: 250px; /* LEBAR DITINGKATKAN (misal: 250px) */
         height: auto; 
-        object-fit: cover;
+        object-fit: cover; 
         border-radius: 8px; 
-        box-shadow: 0 0 15px rgba(27, 71, 241, 0.7); /* Efek glow biru */
-        animation: none;
-    }
-
-    .logo-container { 
-        margin-bottom: 25px; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        /* Ubah tinggi minimum agar sesuai dengan tinggi video */
-        min-height: 80px; 
-    }
-
-    @keyframes pulse {
+        box-shadow: 0 0 15px rgba(27, 71, 241, 0.7); 
+        /* animation: none; - Pastikan tidak ada animasi yang mengganggu interaksi */
     }
 
     .user-info-display { 
@@ -359,9 +346,9 @@
     <div class="content">
         
         <div class="main-card">
- 
+            
             <div class="logo-container">
-                <img src="https://files.catbox.moe/vzmw6r.mp4" alt="Bug Service Animation" class="service-gif">
+                <video src="https://files.catbox.moe/vzmw6r.mp4" class="service-gif" autoplay loop muted playsinline></video>
             </div>
 
             <div class="user-info-display">
@@ -664,4 +651,4 @@
     });
    </script>
  </body>
-    </html>
+</html>
