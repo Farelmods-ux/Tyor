@@ -96,17 +96,16 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100px; /* Diperbesar agar sesuai dengan video yang lebih besar */
+        min-height: 100px; 
     }
 
     .service-gif { 
         width: 100%; 
-        max-width: 250px; /* LEBAR DITINGKATKAN (misal: 250px) */
+        max-width: 250px; 
         height: auto; 
         object-fit: cover; 
         border-radius: 8px; 
         box-shadow: 0 0 15px rgba(27, 71, 241, 0.7); 
-        /* animation: none; - Pastikan tidak ada animasi yang mengganggu interaksi */
     }
 
     .user-info-display { 
@@ -199,7 +198,6 @@
     .send-service-btn { 
         background: linear-gradient(90deg, #F81CF8 0%, #B900FF 100%); 
         color: white; 
-        /* Warna tombol disamakan dengan warna di dashboard.html (Telegram Banner) */
         box-shadow: 0 4px 15px rgba(185, 0, 255, 0.4); 
     }
     
@@ -217,13 +215,12 @@
         width: calc(100% - 40px);
         left: 50%;
         transform: translateX(-50%);
-        top: calc(30px + 20px + 25px + 70px); /* Atur posisi agar di bawah tombol Select Service */
+        top: 360px; /* Nilai diatur agar ada di bawah Select Bug Button */
         background: #1c1c1c;
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
         z-index: 500;
         overflow: hidden;
-        /* margin-top: -15px; */ /* Dihapus, diganti dengan properti top yang dihitung */
     }
 
     .service-option { 
@@ -247,19 +244,26 @@
     /* Notifikasi & Modal Kustom - DISAMAKAN DENGAN DASHBOARD */
     #custom-modal { 
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); 
-        display: none; justify-content: center; align-items: center; z-index: 1000;
+        display: none; justify-content: center; align-items: center; z-index: 99999; /* NEW: Z-index lebih tinggi */
         opacity: 0; transition: opacity 0.3s ease;
+        pointer-events: none; /* NEW: Mencegah stuck */
     }
     
-    .custom-modal.show { opacity: 1; display: flex; }
+    .custom-modal.show { 
+        opacity: 1; 
+        display: flex;
+        pointer-events: auto; /* NEW: Aktifkan saat tampil */
+    }
+    
     .modal-content { 
         background: #1a1a1a; padding: 25px; border-radius: 12px; width: 90%; max-width: 300px; 
-        border: 2px solid #1B47F1; /* Border disamakan */
+        border: 2px solid #1B47F1; 
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); text-align: center; 
     }
     
     .modal-content h3 { color: #1B47F1; margin-bottom: 15px; font-size: 18px; }
     .modal-content p { color: #ccc; margin-bottom: 20px; font-size: 14px; }
+    
     .modal-content button { 
         background-color: #1B47F1; color: white; border: none; padding: 10px 20px; border-radius: 6px; 
         cursor: pointer; font-weight: 600; transition: background-color 0.3s;
@@ -280,7 +284,7 @@
         align-items: center;
         height: 60px;
         background: #0d0d0d;
-        border-top: 3px solid #1B47F1; /* Disamakan dengan dashboard */
+        border-top: 3px solid #1B47F1; 
         z-index: 200;
         padding-bottom: env(safe-area-inset-bottom, 0); 
     }
@@ -290,14 +294,14 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #777; /* Warna default tidak aktif */
+        color: #777; 
         text-decoration: none;
-        font-size: 14px; /* Ukuran teks lebih kecil karena 4 item */
+        font-size: 14px; 
         font-weight: 500;
         cursor: pointer;
         transition: color 0.2s;
         padding: 5px;
-        width: 25%; /* Memastikan pembagian rata 4 item */
+        width: 25%; 
     }
 
     .nav-icon {
@@ -313,7 +317,7 @@
 
     /* Status Aktif */
     .nav-item.active .nav-icon {
-        color: #1B47F1; /* Warna aktif */
+        color: #1B47F1; 
         text-shadow: 0 0 5px #1B47F1;
     }
 
@@ -336,7 +340,6 @@
         </div>
     </div>
 
-    <!-- Header (Fixed di atas) -->    
     <div class="header-top">
         <div class="header-title">Sparta V0.1</div>
         <i class="fas fa-user-circle header-icon"></i>
@@ -475,18 +478,25 @@
         modalButton.onclick = closeCustomModal; // Reset tombol OK
 
         // Sesuaikan warna border
-        const color = isError ? '#ff4444' : '#1B47F1';
+        let color = isError ? '#ff4444' : '#1B47F1';
+        // NEW: Jika DONE BUG, gunakan warna yang berbeda
+        if (title === 'DONE BUG🔥') {
+             color = '#F81CF8';
+        }
+        
         modalElement.querySelector('.modal-content').style.borderColor = color;
         modalTitle.style.color = color;
         modalButton.style.backgroundColor = color;
 
         modalElement.classList.add('show');
         modalElement.style.display = 'flex';
+        modalElement.style.pointerEvents = 'auto'; // Pastikan modal bisa diklik
     }
 
     function closeCustomModal() {
         const modalElement = document.getElementById('custom-modal');
         modalElement.classList.remove('show');
+        modalElement.style.pointerEvents = 'none'; // NEW: Matikan pointer events setelah tertutup
         setTimeout(() => { modalElement.style.display = 'none'; }, 300);
     }
     
@@ -594,45 +604,38 @@
             }
         });
         
-                // Aksi Tombol Send Service
+        // Aksi Tombol Send Service
         sendServiceBtn.addEventListener('click', function() {
             const targetNumber = targetNumberInput.value.trim();
 
-            if (targetNumber === '') {
-                showCustomModal('Harap masukan nomor target!', 'Input Error', true);
-                return;
-            }
-
-            const isSymbol = !/^\d+$/.test(targetNumber); 
-            
-            if (isSymbol) {
-                showCustomModal('Simbol ditemukan, harap hapus simbol dan kembali masukan nomor!', 'Input Error', true);
-                return;
-            }
-            
-            if (targetNumber.length < 8) {
-                showCustomModal('Nomor target minimal 8 digit!', 'Input Error', true);
-                return;
+            // 1. Validasi Target Number (WAJIB DULUAN)
+            if (targetNumber === '' || targetNumber.length < 8 || !/^\d+$/.test(targetNumber)) {
+                if (targetNumber === '') {
+                    showCustomModal('Harap masukan nomor target!', 'Input Error', true);
+                } else if (!/^\d+$/.test(targetNumber)) {
+                    showCustomModal('Simbol ditemukan, harap hapus simbol dan kembali masukan nomor!', 'Input Error', true);
+                } else if (targetNumber.length < 8) {
+                    showCustomModal('Nomor target minimal 8 digit!', 'Input Error', true);
+                }
+                return; // Berhenti di sini, tidak lanjut ke validasi berikutnya
             }
             
+            // 2. Validasi Select Bug (SETELAH NOMOR TERISI)
             if (!selectedService) {
                 showCustomModal('Pilih jenis Bug terlebih dahulu!', 'Input Error', true);
-                return;
+                return; // Berhenti di sini, tidak lanjut ke pengiriman
             }
             
-            // --- LOGIKA PENGIRIMAN BUG (Dijalankan hanya jika semua validasi sukses) ---
+            // 3. LOGIKA PENGIRIMAN BUG (Dijalankan hanya jika semua validasi sukses)
             const fullTarget = `+62${targetNumber}`;
 
-            // *** Perbaikan: Tampilkan popup sukses dan reset input ***
-            // Karena ini masih simulasi, kita langsung tampilkan sukses setelah semua cek dilewati
+            // *** Tampilkan popup sukses ***
             showCustomModal(`Successfully Sending Bug Type ${serviceSelections[selectedService]} To Target: ${fullTarget}!`, 'DONE BUG🔥', false);
             
             // Bersihkan input setelah "pengiriman" sukses
             targetNumberInput.value = '';
             selectedService = '';
             selectServiceBtn.innerHTML = `Select Bug <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>`;
-            
-            // Tidak perlu ada "return" di sini karena logika selesai
         });
         
         // Event Listener untuk Logout di Icon Profil
